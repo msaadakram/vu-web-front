@@ -26,13 +26,14 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/resources";
-  const { user, loading } = useAuth();
+
+  // Single useAuth() call — destructure everything needed at once
+  const { user, loading, login } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!loading && user) router.replace("/");
   }, [user, loading, router]);
-  const { login } = useAuth();
-  const [submitting, setSubmitting] = useState(false);
 
   const {
     register,
@@ -43,8 +44,8 @@ function LoginForm() {
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
     try {
-      const user = await login(values.email, values.password);
-      toast.success(`Welcome back, ${user.name.split(" ")[0]}!`);
+      const loggedInUser = await login(values.email, values.password);
+      toast.success(`Welcome back, ${loggedInUser.name.split(" ")[0]}!`);
       router.push(next);
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "Login failed";
@@ -100,7 +101,10 @@ function LoginForm() {
               type="password"
               placeholder="••••••••"
               className="pl-10 h-11"
-              {...register("password", { required: "Password is required" })}
+              {...register("password", {
+                required: "Password is required",
+                minLength: { value: 6, message: "Password must be at least 6 characters" },
+              })}
             />
           </div>
           {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
