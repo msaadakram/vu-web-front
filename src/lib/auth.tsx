@@ -35,9 +35,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokenState(existing);
     api<{ data: { user: ApiUser } }>("/auth/me")
       .then((res) => setUser(res.data.user))
-      .catch(() => {
-        setToken(null);
-        setTokenState(null);
+      .catch((err) => {
+        // Only clear token on actual auth failures, not network errors
+        if (err?.status === 401 || err?.status === 403) {
+          setToken(null);
+          setTokenState(null);
+        }
       })
       .finally(() => setLoading(false));
   }, []);
