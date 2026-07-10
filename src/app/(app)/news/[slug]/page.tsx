@@ -37,7 +37,7 @@ type NewsPost = {
 
 async function fetchPost(slug: string) {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
     const res = await fetch(
       `${backendUrl}/api/news/${encodeURIComponent(slug)}`,
       { cache: "no-store" }
