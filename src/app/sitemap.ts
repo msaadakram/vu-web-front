@@ -4,11 +4,14 @@ import { allPrograms } from "@/lib/programs";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.BLOG_PUBLIC_BASE_URL || "http://localhost:3000";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
-// Re-generate the sitemap at most once per hour, so newly published
-// blog/news posts appear without a full redeploy. On-demand revalidation
-// (via /api/revalidate) refreshes it immediately after a new post is published.
+// Re-generate the sitemap at most once per hour so newly published
+// blog/news posts appear without a full redeploy.
+// On-demand revalidation (via /api/revalidate) refreshes it immediately
+// after a new post is published.
+//
+// NOTE: do NOT set `dynamic = "force-static"` here — it conflicts with
+// `revalidate` and breaks ISR (sitemap would never update after build).
 export const revalidate = 3600;
-export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -36,8 +39,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       fetch(`${BACKEND_URL}/api/blog?limit=500`, { cache: "no-store" }),
       fetch(`${BACKEND_URL}/api/news?limit=500`, { cache: "no-store" }),
     ]);
+
+    if (!blogRes.ok || !newsRes.ok) {
+      console.warn(`[Sitemap] API error — blog: ${blogRes.status}, news: ${newsRes.status}`);
+      return [...staticPages, ...programPages];
+    }
+
     const [blogData, newsData] = await Promise.all([blogRes.json(), newsRes.json()]);
 
+    // Blog API: { data: { blogs: [...] } }
     const blogPages: MetadataRoute.Sitemap = (blogData?.data?.blogs || []).map(
       (blog: { slug: string; updatedAt?: string; createdAt?: string }) => ({
         url: `${BASE_URL}/blog/${blog.slug}`,
@@ -47,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     );
 
+    // News API: { data: { blogs: [...] } }  (same model, type=news)
     const newsPages: MetadataRoute.Sitemap = (newsData?.data?.blogs || []).map(
       (news: { slug: string; updatedAt?: string; createdAt?: string }) => ({
         url: `${BASE_URL}/news/${news.slug}`,
@@ -57,7 +68,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
 
     return [...staticPages, ...programPages, ...blogPages, ...newsPages];
-  } catch {
+  } catch (err) {
+    console.warn("[Sitemap] Failed to fetch dynamic pages:", (err as Error).message);
     return [...staticPages, ...programPages];
   }
 }

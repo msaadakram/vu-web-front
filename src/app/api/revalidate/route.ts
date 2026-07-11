@@ -25,25 +25,27 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ revalidated: false, message: "Unauthorized" }, { status: 401 });
   }
 
-  const pathsToRevalidate = [
-    "/blog",
-    "/news",
-    "/blog/[slug]",
-    "/news/[slug]",
-  ];
+  const listingPaths = ["/blog", "/news", "/blog/[slug]", "/news/[slug]"];
   const tag = req.nextUrl.searchParams.get("tag");
 
   try {
-    for (const p of pathsToRevalidate) revalidatePath(p);
+    // Revalidate all listing + detail pages
+    for (const p of listingPaths) revalidatePath(p);
     if (tag) revalidateTag(tag);
 
-    // Re-render the sitemap.xml + robots.txt routes.
-    revalidatePath("/sitemap.xml", "page");
-    revalidatePath("/robots.txt", "page");
+    // Re-render the sitemap.xml and robots.txt.
+    // Using "layout" re-executes the route-level default export (the sitemap
+    // function), which is what Next.js App Router needs for file-based routes
+    // like sitemap.ts and robots.ts.
+    revalidatePath("/sitemap.xml", "layout");
+    revalidatePath("/robots.txt", "layout");
+
+    // Also revalidate the root layout so any layout-level cached data clears
+    revalidatePath("/", "layout");
 
     return NextResponse.json({
       revalidated: true,
-      paths: pathsToRevalidate,
+      paths: [...listingPaths, "/sitemap.xml", "/robots.txt"],
       tag: tag || null,
       at: new Date().toISOString(),
     });
