@@ -12,8 +12,13 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { ShareButton } from "@/components/ShareButton";
 import { TableOfContents, type TocItem } from "@/components/TableOfContents";
 import { DownloadButton } from "@/components/DownloadButton";
+import { BlogHashtags } from "@/components/BlogHashtags";
+import { RelatedBlogs, type RelatedBlogCard } from "@/components/RelatedBlogs";
+import { matchHashtags, getRelatedBlogSlugs } from "@/lib/seo-hashtags";
 
 type Props = { params: Promise<{ slug: string }> };
+
+const BASE_URL = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://virtualupk.vercel.app";
 
 async function fetchPost(slug: string) {
   try {
@@ -25,29 +30,77 @@ async function fetchPost(slug: string) {
   } catch { return null; }
 }
 
+async function fetchRelatedPosts(slugs: string[]): Promise<RelatedBlogCard[]> {
+  try {
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
+    const results = await Promise.allSettled(
+      slugs.map((s) =>
+        fetch(`${backendUrl}/api/blog/${encodeURIComponent(s)}`, { next: { revalidate: 3600 } })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => d?.data?.blog || null)
+      )
+    );
+    return results
+      .filter((r): r is PromiseFulfilledResult<RelatedBlogCard> => r.status === "fulfilled" && !!r.value)
+      .map((r) => r.value);
+  } catch { return []; }
+}
+
+async function fetchBlogsByCategory(category: string, excludeSlug: string): Promise<RelatedBlogCard[]> {
+  try {
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
+    const res = await fetch(
+      `${backendUrl}/api/blog?category=${encodeURIComponent(category)}&limit=4`,
+      { next: { revalidate: 3600 } }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const posts: RelatedBlogCard[] = data.data?.blogs || [];
+    return posts.filter((p) => p.slug !== excludeSlug).slice(0, 3);
+  } catch { return []; }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await fetchPost(slug);
   if (!blog) return { title: "Not Found | VirtualU" };
-  const baseUrl = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://virtualupk.vercel.app";
+
+  // Enrich keywords with SEO hashtag registry matches
+  const hashtagMatches = matchHashtags(blog.tags || [], blog.keywords || []);
+  const enrichedKeywords = [
+    ...(blog.keywords || []),
+    ...hashtagMatches.map((h) => h.keyword),
+    "Virtual University of Pakistan",
+    "VU",
+    "vu online admission",
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
   return {
     title: blog.metaTitle || blog.title,
     description: blog.metaDescription || blog.excerpt,
-    keywords: blog.keywords?.join(", ") || "",
+    keywords: enrichedKeywords,
     authors: blog.uploadedBy ? [{ name: blog.uploadedBy.name }] : [],
-    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+    },
     openGraph: {
       title: blog.metaTitle || blog.title,
       description: blog.metaDescription || blog.excerpt,
       type: "article",
       publishedTime: blog.createdAt,
       modifiedTime: blog.updatedAt,
-      url: `${baseUrl}/blog/${blog.slug}`,
+      url: `${BASE_URL}/blog/${blog.slug}`,
       siteName: "VirtualU",
       locale: "en_US",
     },
-    twitter: { card: "summary_large_image", title: blog.metaTitle || blog.title, description: blog.metaDescription || blog.excerpt },
-    alternates: { canonical: `${baseUrl}/blog/${blog.slug}` },
+    twitter: {
+      card: "summary_large_image",
+      title: blog.metaTitle || blog.title,
+      description: blog.metaDescription || blog.excerpt,
+    },
+    alternates: { canonical: `${BASE_URL}/blog/${blog.slug}` },
   };
 }
 
@@ -56,12 +109,36 @@ export default async function BlogDetailPage({ params }: Props) {
   const blog = await fetchPost(slug);
   if (!blog) notFound();
 
-  const baseUrl = process.env.BLOG_PUBLIC_BASE_URL || "https://virtualupk.vercel.app";
   const resource = blog.resource;
+
+  // ── Interlinking: fetch related posts ──
+  const relatedSlugs = getRelatedBlogSlugs(slug, blog.category || "", blog.tags || []);
+  const [relatedBySlug, relatedByCategory] = await Promise.all([
+    fetchRelatedPosts(relatedSlugs),
+    fetchBlogsByCategory(blog.category || "", slug),
+  ]);
+
+  // Merge and dedupe related posts
+  const seenRelated = new Set<string>();
+  const relatedPosts: RelatedBlogCard[] = [];
+  for (const p of [...relatedBySlug, ...relatedByCategory]) {
+    if (!seenRelated.has(p.slug)) {
+      seenRelated.add(p.slug);
+      relatedPosts.push(p);
+    }
+    if (relatedPosts.length >= 3) break;
+  }
 
   const tocItems: TocItem[] = (blog.sections || []).map(
     (s: { heading: string }, idx: number) => ({ id: `section-${idx + 1}`, heading: s.heading, level: 2 })
   );
+
+  // ── Schema.org JSON-LD ──
+  const hashtagMatches = matchHashtags(blog.tags || [], blog.keywords || []);
+  const enrichedKeywords = [
+    ...(blog.keywords || []),
+    ...hashtagMatches.map((h) => h.keyword),
+  ].filter((v, i, a) => a.indexOf(v) === i);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -72,30 +149,53 @@ export default async function BlogDetailPage({ params }: Props) {
         description: blog.metaDescription || blog.excerpt,
         datePublished: blog.createdAt,
         dateModified: blog.updatedAt,
-        keywords: blog.keywords?.join(", ") || "",
-        image: `${baseUrl}/og-default.png`,
-        author: { "@type": "Organization", name: "Virtual University of Pakistan", url: baseUrl },
-        publisher: { "@type": "Organization", name: "Virtual University of Pakistan", logo: { "@type": "ImageObject", url: `${baseUrl}/logo.png` } },
-        mainEntityOfPage: { "@type": "WebPage", "@id": `${baseUrl}/blog/${blog.slug}` },
+        keywords: enrichedKeywords.join(", "),
+        image: `${BASE_URL}/og-default.png`,
+        author: { "@type": "Organization", name: "Virtual University of Pakistan", url: BASE_URL },
+        publisher: {
+          "@type": "Organization",
+          name: "Virtual University of Pakistan",
+          logo: { "@type": "ImageObject", url: `${BASE_URL}/logo.png` },
+        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE_URL}/blog/${blog.slug}` },
         educationalLevel: "University",
         educationalUse: "Study Guide",
         inLanguage: "en-US",
         audience: { "@type": "EducationalAudience", educationalRole: "student" },
+        // Related article links for Google
+        relatedLink: relatedPosts.map((p) => `${BASE_URL}/blog/${p.slug}`),
+        about: hashtagMatches.slice(0, 5).map((h) => ({
+          "@type": "Thing",
+          name: h.tag,
+        })),
       },
-      ...(blog.faq?.length > 0 ? [{ "@type": "FAQPage", mainEntity: blog.faq.map((f: { question: string; answer: string }) => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer } })) }] : []),
-      { "@type": "BreadcrumbList", itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
-        { "@type": "ListItem", position: 2, name: "Blog", item: `${baseUrl}/blog` },
-        { "@type": "ListItem", position: 3, name: blog.title, item: `${baseUrl}/blog/${blog.slug}` },
-      ]},
+      ...(blog.faq?.length > 0
+        ? [{
+            "@type": "FAQPage",
+            mainEntity: blog.faq.map((f: { question: string; answer: string }) => ({
+              "@type": "Question",
+              name: f.question,
+              acceptedAnswer: { "@type": "Answer", text: f.answer },
+            })),
+          }]
+        : []),
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE_URL}/blog` },
+          ...(blog.category ? [{ "@type": "ListItem", position: 3, name: blog.category, item: `${BASE_URL}/blog?category=${encodeURIComponent(blog.category)}` }] : []),
+          { "@type": "ListItem", position: blog.category ? 4 : 3, name: blog.title, item: `${BASE_URL}/blog/${blog.slug}` },
+        ],
+      },
     ],
   };
 
   function formatDate(iso: string) {
-    try { return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }); } catch { return ""; }
+    try {
+      return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    } catch { return ""; }
   }
-
-  const readingMinutes = parseInt((blog.readTime || "5 min").replace(/\D/g, "")) || 5;
 
   return (
     <>
@@ -106,7 +206,13 @@ export default async function BlogDetailPage({ params }: Props) {
         {/* ── Hero ── */}
         <section className="relative pt-16 lg:pt-[4.5rem] pb-20 sm:pb-24 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[#05101e] via-[#0e1e35] to-[#061525]" />
-          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage:`linear-gradient(rgba(78,175,196,0.7) 1px,transparent 1px),linear-gradient(90deg,rgba(78,175,196,0.7) 1px,transparent 1px)`, backgroundSize:"52px 52px" }} />
+          <div
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: `linear-gradient(rgba(78,175,196,0.7) 1px,transparent 1px),linear-gradient(90deg,rgba(78,175,196,0.7) 1px,transparent 1px)`,
+              backgroundSize: "52px 52px",
+            }}
+          />
           <div className="absolute top-0 right-0 w-[520px] h-[520px] bg-[#4eafc4]/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#2dd4bf]/6 rounded-full blur-[110px] pointer-events-none" />
 
@@ -116,6 +222,17 @@ export default async function BlogDetailPage({ params }: Props) {
               <Link href="/" className="hover:text-[#4eafc4] transition-colors">Home</Link>
               <ChevronRight className="w-3 h-3 shrink-0" />
               <Link href="/blog" className="hover:text-[#4eafc4] transition-colors">Blog</Link>
+              {blog.category && (
+                <>
+                  <ChevronRight className="w-3 h-3 shrink-0" />
+                  <Link
+                    href={`/blog?category=${encodeURIComponent(blog.category)}`}
+                    className="hover:text-[#4eafc4] transition-colors"
+                  >
+                    {blog.category}
+                  </Link>
+                </>
+              )}
               <ChevronRight className="w-3 h-3 shrink-0" />
               <span className="text-white/55 truncate max-w-[200px] sm:max-w-none">{blog.title}</span>
             </nav>
@@ -124,9 +241,12 @@ export default async function BlogDetailPage({ params }: Props) {
               {/* Badges */}
               <div className="flex items-center justify-center gap-2 flex-wrap mb-5">
                 {blog.category && (
-                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#4eafc4]/15 border border-[#4eafc4]/25 text-[#7dd4e8] rounded-full text-[11px] font-semibold backdrop-blur-sm">
+                  <Link
+                    href={`/blog?category=${encodeURIComponent(blog.category)}`}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#4eafc4]/15 border border-[#4eafc4]/25 text-[#7dd4e8] rounded-full text-[11px] font-semibold backdrop-blur-sm hover:bg-[#4eafc4]/25 transition-colors"
+                  >
                     <span className="w-1.5 h-1.5 rounded-full bg-[#4eafc4]" />{blog.category}
-                  </span>
+                  </Link>
                 )}
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/6 border border-white/10 text-white/55 rounded-full text-[11px] backdrop-blur-sm">
                   <Clock className="w-3 h-3" />{blog.readTime}
@@ -139,14 +259,33 @@ export default async function BlogDetailPage({ params }: Props) {
               {/* H1 */}
               <h1
                 className="text-white mb-5"
-                style={{ fontFamily:"var(--font-playfair), serif", fontWeight:800, fontSize:"clamp(1.6rem,6vw,3rem)", lineHeight:1.15, letterSpacing:"-0.025em" }}
+                style={{
+                  fontFamily: "var(--font-playfair), serif",
+                  fontWeight: 800,
+                  fontSize: "clamp(1.6rem,6vw,3rem)",
+                  lineHeight: 1.15,
+                  letterSpacing: "-0.025em",
+                }}
               >
                 {blog.title}
               </h1>
 
-              <p className="text-white/50 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-7 px-2">
+              <p className="text-white/50 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-5 px-2">
                 {blog.excerpt}
               </p>
+
+              {/* Inline hashtags in hero */}
+              <div className="flex items-center justify-center flex-wrap gap-2 mb-7">
+                {hashtagMatches.slice(0, 5).map((h) => (
+                  <Link
+                    key={h.slug}
+                    href={`/blog/tag/${h.slug}`}
+                    className="text-[#4eafc4]/70 text-[11px] font-semibold hover:text-[#4eafc4] transition-colors"
+                  >
+                    #{h.tag.replace(/ /g, "")}
+                  </Link>
+                ))}
+              </div>
 
               {/* Meta row */}
               <div className="flex items-center justify-center gap-4 sm:gap-6 text-white/40 text-xs flex-wrap">
@@ -173,12 +312,12 @@ export default async function BlogDetailPage({ params }: Props) {
           {/* Wave */}
           <div className="absolute bottom-0 left-0 right-0">
             <svg viewBox="0 0 1440 56" fill="none" className="w-full h-auto" preserveAspectRatio="none">
-              <path d="M0 56L80 48C160 40 320 24 480 20C640 16 800 24 960 32C1120 40 1280 48 1360 50L1440 52V56H0Z" fill="#f4f7fa"/>
+              <path d="M0 56L80 48C160 40 320 24 480 20C640 16 800 24 960 32C1120 40 1280 48 1360 50L1440 52V56H0Z" fill="#f4f7fa" />
             </svg>
           </div>
         </section>
 
-        {/* ── Reading progress + body ── */}
+        {/* ── Body ── */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 pb-20">
 
           {/* Mobile ToC */}
@@ -244,29 +383,24 @@ export default async function BlogDetailPage({ params }: Props) {
                 {(blog.sections || []).map(
                   (section: { number?: string; heading: string; body: string; keyPoints?: string[] }, idx: number) => (
                     <section key={idx} id={`section-${idx + 1}`} className="scroll-mt-24">
-                      {/* Section heading */}
                       <div className="flex items-start gap-3 mb-5 pb-3 border-b border-gray-100">
                         <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-[#4eafc4] to-[#2a8aa3] text-white text-xs font-bold shrink-0 mt-0.5 shadow-sm">
                           {section.number || idx + 1}
                         </span>
                         <h2
                           className="text-[#0f172a] flex-1"
-                          style={{ fontFamily:"var(--font-playfair), serif", fontWeight:700, fontSize:"clamp(1.2rem,3vw,1.5rem)", lineHeight:1.3 }}
+                          style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 700, fontSize: "clamp(1.2rem,3vw,1.5rem)", lineHeight: 1.3 }}
                         >
                           {section.heading}
                         </h2>
                       </div>
-
-                      {/* Body paragraphs */}
                       <div className="space-y-4">
                         {section.body.split("\n\n").filter(Boolean).map((para, pi) => (
-                          <p key={pi} className="text-[#334155] leading-[1.82]" style={{ fontSize:"clamp(0.95rem,2vw,1.05rem)" }}>
+                          <p key={pi} className="text-[#334155] leading-[1.82]" style={{ fontSize: "clamp(0.95rem,2vw,1.05rem)" }}>
                             {para}
                           </p>
                         ))}
                       </div>
-
-                      {/* Key points */}
                       {(section.keyPoints?.length ?? 0) > 0 && (
                         <div className="mt-5 bg-[#f8fafc] rounded-xl border border-gray-100 p-4 sm:p-5">
                           <p className="text-[10px] font-bold uppercase tracking-widest text-[#4eafc4] mb-3">Section Summary</p>
@@ -296,9 +430,13 @@ export default async function BlogDetailPage({ params }: Props) {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {blog.relatedConcepts.map((c: string, i: number) => (
-                      <span key={i} className="px-3.5 py-1.5 bg-[#e8f4f7] text-[#3a95aa] rounded-full text-xs font-semibold border border-[#4eafc4]/15 hover:bg-[#4eafc4]/15 transition-colors cursor-default">
+                      <Link
+                        key={i}
+                        href={`/blog/tag/${c.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                        className="px-3.5 py-1.5 bg-[#e8f4f7] text-[#3a95aa] rounded-full text-xs font-semibold border border-[#4eafc4]/15 hover:bg-[#4eafc4]/15 transition-colors"
+                      >
                         {c}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -312,7 +450,7 @@ export default async function BlogDetailPage({ params }: Props) {
                       <BookOpen className="w-5 h-5 text-[#4eafc4]" />
                     </div>
                     <div>
-                      <h2 style={{ fontFamily:"var(--font-playfair), serif", fontWeight:700, fontSize:"1.25rem" }} className="text-[#0f172a]">
+                      <h2 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 700, fontSize: "1.25rem" }} className="text-[#0f172a]">
                         Frequently Asked Questions
                       </h2>
                       <p className="text-[#94a3b8] text-xs mt-0.5">Common questions about this topic</p>
@@ -322,18 +460,31 @@ export default async function BlogDetailPage({ params }: Props) {
                 </div>
               )}
 
-              {/* Tags */}
+              {/* ── SEO Hashtags (keyword-linked tags) ── */}
+              <BlogHashtags
+                tags={blog.tags || []}
+                keywords={blog.keywords || []}
+                maxTags={14}
+                appendTrending
+                variant="pill"
+              />
+
+              {/* Legacy tag display */}
               {blog.tags?.length > 0 && (
-                <div className="mt-10 pt-8 border-t border-gray-100">
+                <div className="mt-6 pt-6 border-t border-gray-100">
                   <div className="flex items-center gap-2 mb-3">
                     <Tag className="w-3.5 h-3.5 text-[#94a3b8]" />
                     <span className="text-xs text-[#94a3b8] font-semibold uppercase tracking-wider">Tags</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {blog.tags.map((tag: string) => (
-                      <span key={tag} className="px-3 py-1.5 bg-white border border-gray-100 text-[#64788b] rounded-full text-xs font-medium hover:border-[#4eafc4]/40 hover:text-[#4eafc4] transition-colors cursor-default">
+                      <Link
+                        key={tag}
+                        href={`/blog/tag/${tag.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                        className="px-3 py-1.5 bg-white border border-gray-100 text-[#64788b] rounded-full text-xs font-medium hover:border-[#4eafc4]/40 hover:text-[#4eafc4] transition-colors"
+                      >
                         #{tag}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -344,24 +495,57 @@ export default async function BlogDetailPage({ params }: Props) {
                 <Sparkles className="w-4 h-4 text-[#4eafc4] shrink-0 mt-0.5" />
                 <span>
                   This article was AI-generated for{" "}
-                  <strong className="text-[#64788b]">Virtual University of Pakistan (VU)</strong> students based on the uploaded resource
-                  {blog.aiModel ? ` using ${blog.aiModel}` : ""}. Designed to support your learning. For official materials, visit the{" "}
-                  <a href={baseUrl} className="text-[#4eafc4] hover:underline font-semibold">VirtualU platform</a>.
+                  <strong className="text-[#64788b]">Virtual University of Pakistan (VU)</strong> students.
+                  {blog.aiModel ? ` Generated using ${blog.aiModel}.` : ""} For official materials, visit the{" "}
+                  <a href={BASE_URL} className="text-[#4eafc4] hover:underline font-semibold">VirtualU platform</a>.
                 </span>
               </div>
 
+              {/* ── Related Articles (interlinking) ── */}
+              <RelatedBlogs
+                posts={relatedPosts}
+                currentSlug={slug}
+                title="Related Articles"
+              />
+
               {/* CTA row */}
               <div className="mt-10 flex flex-col sm:flex-row items-center gap-3">
-                <Link href="/blog" className="inline-flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 text-[#64788b] rounded-full text-sm font-semibold hover:border-[#4eafc4] hover:text-[#4eafc4] transition-all w-full sm:w-auto justify-center">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 text-[#64788b] rounded-full text-sm font-semibold hover:border-[#4eafc4] hover:text-[#4eafc4] transition-all w-full sm:w-auto justify-center"
+                >
                   <ArrowLeft className="w-4 h-4" /> All Articles
                 </Link>
                 <ShareButton />
               </div>
             </div>
 
-            {/* ── Desktop sidebar ToC ── */}
+            {/* ── Sidebar ── */}
             <aside className="hidden lg:block">
               <TableOfContents items={tocItems} />
+
+              {/* Sidebar: compact related posts */}
+              {relatedPosts.length > 0 && (
+                <div className="mt-8 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm sticky top-24">
+                  <p className="text-[10px] font-bold text-[#4eafc4] uppercase tracking-widest mb-4">Read Next</p>
+                  <div className="space-y-3">
+                    {relatedPosts.map((p) => (
+                      <Link
+                        key={p._id}
+                        href={`/blog/${p.slug}`}
+                        className="group flex items-start gap-3 hover:bg-[#f8fafc] rounded-xl p-2 -mx-2 transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#e8f4f7] to-[#d1edf2] flex items-center justify-center shrink-0 mt-0.5">
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#4eafc4]" />
+                        </div>
+                        <p className="text-[#334155] text-xs font-medium leading-snug group-hover:text-[#3a95aa] transition-colors line-clamp-3">
+                          {p.title}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </aside>
           </div>
         </div>
