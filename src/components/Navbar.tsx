@@ -1,37 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import {
-  Search,
-  Menu,
-  X,
-  GraduationCap,
-  Upload,
-  LogOut,
-  User as UserIcon,
-  BookOpen,
-  Library,
-  ChevronDown,
-  Sparkles,
+  Search, Menu, X, GraduationCap, Upload, LogOut,
+  Library, Sparkles, ChevronDown, Bell, BookOpen,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/programs", label: "Programs" },
-  { href: "/fee-structure", label: "Fee Structure" },
+  { href: "/fee-structure", label: "Fee" },
   { href: "/news", label: "News" },
   { href: "/blog", label: "Blog" },
   { href: "/resources", label: "Resources" },
@@ -39,12 +26,7 @@ const navLinks = [
 ];
 
 function initials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  return name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
 }
 
 export function Navbar() {
@@ -52,107 +34,132 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, loading } = useAuth();
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 60);
+    const handler = () => {
+      const y = window.scrollY;
+      setScrolled(y > 40);
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docH > 0 ? (y / docH) * 100 : 0);
+    };
     window.addEventListener("scroll", handler, { passive: true });
+    handler();
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
-  // Close mobile menu on Escape
   useEffect(() => {
     if (!mobileOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMobileOpen(false);
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape") setMobileOpen(false); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
   }, [mobileOpen]);
 
-  // Lock body scroll while the mobile menu is open
   useEffect(() => {
-    if (!mobileOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => searchRef.current?.focus(), 100);
+  }, [searchOpen]);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const onLogout = () => {
     logout();
-    toast.success("Logged out");
+    toast.success("Logged out successfully");
     router.push("/");
+  };
+
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/resources?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
   };
 
   return (
     <>
+      {/* Scroll progress bar */}
+      <motion.div
+        className="fixed top-0 left-0 h-[2px] z-[60] bg-gradient-to-r from-[#4eafc4] via-[#7dd4e8] to-[#4eafc4]"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-white/90 backdrop-blur-xl shadow-lg shadow-navy/5 border-b border-navy/8"
-            : "bg-gradient-to-b from-black/30 to-transparent backdrop-blur-[2px]"
+            ? "bg-white/95 backdrop-blur-2xl shadow-[0_4px_32px_rgba(28,53,87,0.08)] border-b border-[#1c3557]/6"
+            : "bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-18">
+
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shadow-lg group-hover:shadow-[#4eafc4]/30 transition-all duration-300">
+              <motion.div
+                whileHover={{ rotate: [0, -8, 8, 0], scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+                className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shadow-lg group-hover:shadow-[#4eafc4]/40 transition-shadow duration-300"
+              >
                 <GraduationCap className="w-[18px] h-[18px] lg:w-5 lg:h-5 text-white" />
-              </div>
+              </motion.div>
               <div>
                 <span
                   className={`block font-bold leading-none transition-colors duration-300 ${
                     scrolled ? "text-[#1c3557]" : "text-white"
                   }`}
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: "1.1rem",
-                  }}
+                  style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem" }}
                 >
                   VirtualU
                 </span>
-                <span className="block text-[#4eafc4] text-[10px] lg:text-xs font-medium tracking-[0.15em] uppercase">
+                <span className="block text-[#4eafc4] text-[10px] lg:text-xs font-semibold tracking-[0.18em] uppercase">
                   University
                 </span>
               </div>
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-0.5">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative px-3.5 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`relative px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 group ${
                       active
                         ? "text-[#4eafc4]"
                         : scrolled
-                          ? "text-[#1c3557]/80 hover:text-[#4eafc4]"
-                          : "text-white/85 hover:text-white"
+                          ? "text-[#1c3557]/75 hover:text-[#1c3557]"
+                          : "text-white/80 hover:text-white"
                     }`}
                   >
-                    {link.label}
+                    <span className={`absolute inset-0 rounded-lg transition-opacity duration-200 ${
+                      active
+                        ? "opacity-100 bg-[#4eafc4]/8"
+                        : "opacity-0 group-hover:opacity-100 " + (scrolled ? "bg-[#f0f7fa]" : "bg-white/8")
+                    }`} />
+                    <span className="relative">{link.label}</span>
                     {active && (
                       <motion.div
-                        layoutId="nav-indicator"
-                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#4eafc4]"
+                        layoutId="nav-dot"
+                        className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-[#4eafc4]"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
                   </Link>
@@ -161,90 +168,78 @@ export function Navbar() {
             </div>
 
             {/* Right Actions */}
-            <div className="hidden md:flex items-center gap-2.5">
+            <div className="hidden md:flex items-center gap-2">
               <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setSearchOpen(!searchOpen)}
-                className={`p-2.5 rounded-lg transition-colors duration-200 ${
+                whileTap={{ scale: 0.92 }}
+                onClick={() => setSearchOpen((v) => !v)}
+                className={`p-2.5 rounded-xl transition-all duration-200 ${
                   scrolled
-                    ? "text-[#1c3557]/70 hover:bg-[#e8f4f7]"
-                    : "text-white/80 hover:bg-white/10"
+                    ? "text-[#1c3557]/60 hover:bg-[#f0f7fa] hover:text-[#4eafc4]"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-label="Toggle search"
               >
-                <Search className="w-[18px] h-[18px]" />
+                <Search className="w-[17px] h-[17px]" />
               </motion.button>
 
               {loading ? null : user ? (
                 <>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                     <Link
                       href="/upload"
-                      className="flex items-center gap-2 px-4 lg:px-5 py-2.5 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] text-white rounded-full text-sm font-semibold shadow-lg shadow-[#4eafc4]/25 hover:shadow-[#4eafc4]/40 transition-all duration-300"
+                      className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-full text-sm font-semibold shadow-lg shadow-[#4eafc4]/25 hover:shadow-[#4eafc4]/45 transition-all duration-300"
                     >
-                      <Upload className="w-4 h-4" />
+                      <Upload className="w-3.5 h-3.5" />
                       <span className="hidden lg:inline">Upload</span>
                     </Link>
                   </motion.div>
-
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-2 p-1 pr-2.5 rounded-full border border-[#1c3557]/10 hover:bg-[#e8f4f7]/70 transition-all duration-200">
-                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-gradient-to-br from-[#1c3557] to-[#4eafc4] text-white flex items-center justify-center text-[10px] lg:text-xs font-bold">
+                      <button className={`flex items-center gap-2 px-2 py-1.5 rounded-full border transition-all duration-200 ${
+                        scrolled ? "border-[#1c3557]/10 hover:bg-[#f0f7fa]" : "border-white/15 hover:bg-white/10"
+                      }`}>
+                        <span className="w-7 h-7 rounded-full bg-gradient-to-br from-[#1c3557] to-[#4eafc4] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                           {initials(user.name)}
                         </span>
-                        <span
-                          className={`text-sm font-medium hidden lg:block transition-colors duration-300 ${
-                            scrolled ? "text-[#1c3557]" : "text-white"
-                          }`}
-                        >
-                          {user.name.split(" ")[0]}
-                        </span>
+                        <span className={`text-xs font-semibold hidden lg:block ${
+                          scrolled ? "text-[#1c3557]" : "text-white"
+                        }`}>{user.name.split(" ")[0]}</span>
+                        <ChevronDown className={`w-3 h-3 hidden lg:block ${
+                          scrolled ? "text-[#1c3557]/40" : "text-white/40"
+                        }`} />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel className="font-normal">
-                        <div className="flex flex-col space-y-1">
-                          <span className="text-sm font-medium leading-none">
-                            {user.name}
-                          </span>
-                          <span className="text-xs leading-none text-muted-foreground">
-                            {user.email}
-                          </span>
-                          {user.role === "admin" && (
-                            <span className="text-[10px] font-semibold text-[#4eafc4] uppercase tracking-wider mt-1">
-                              Admin
-                            </span>
-                          )}
+                    <DropdownMenuContent align="end" className="w-56 rounded-2xl shadow-xl border-[#1c3557]/8 p-1.5">
+                      <DropdownMenuLabel className="font-normal px-3 py-2">
+                        <div className="flex items-center gap-3">
+                          <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1c3557] to-[#4eafc4] text-white flex items-center justify-center text-xs font-bold">{initials(user.name)}</span>
+                          <div>
+                            <p className="text-sm font-semibold text-[#0f1e35]">{user.name}</p>
+                            <p className="text-xs text-[#64788f] truncate max-w-[130px]">{user.email}</p>
+                          </div>
                         </div>
                       </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
+                      <DropdownMenuSeparator className="my-1" />
                       {user.role === "admin" && (
-                        <>
-                          <DropdownMenuItem asChild>
-                            <Link href="/admin" className="cursor-pointer">
-                              <Sparkles className="w-4 h-4 mr-2" /> Admin Dashboard
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                        </>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="cursor-pointer rounded-xl flex items-center gap-2 px-3 py-2.5">
+                            <Sparkles className="w-4 h-4 text-[#4eafc4]" /> Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
                       )}
-                          <DropdownMenuItem asChild>
-                        <Link href="/upload" className="cursor-pointer">
-                          <Upload className="w-4 h-4 mr-2" /> Upload Resource
+                      <DropdownMenuItem asChild>
+                        <Link href="/upload" className="cursor-pointer rounded-xl flex items-center gap-2 px-3 py-2.5">
+                          <Upload className="w-4 h-4 text-[#64788f]" /> Upload Resource
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/resources" className="cursor-pointer">
-                          <Library className="w-4 h-4 mr-2" /> Browse Resources
+                        <Link href="/resources" className="cursor-pointer rounded-xl flex items-center gap-2 px-3 py-2.5">
+                          <Library className="w-4 h-4 text-[#64788f]" /> Browse Resources
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={onLogout}
-                        className="cursor-pointer text-destructive focus:text-destructive"
-                      >
-                        <LogOut className="w-4 h-4 mr-2" /> Log out
+                      <DropdownMenuSeparator className="my-1" />
+                      <DropdownMenuItem onClick={onLogout} className="cursor-pointer rounded-xl flex items-center gap-2 px-3 py-2.5 text-red-500 focus:text-red-500 focus:bg-red-50">
+                        <LogOut className="w-4 h-4" /> Log out
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -253,18 +248,16 @@ export function Navbar() {
                 <div className="flex items-center gap-2">
                   <Link
                     href="/login"
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                      scrolled
-                        ? "text-[#1c3557]/80 hover:bg-[#e8f4f7]"
-                        : "text-white/85 hover:bg-white/10"
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      scrolled ? "text-[#1c3557]/75 hover:bg-[#f0f7fa] hover:text-[#1c3557]" : "text-white/80 hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     Login
                   </Link>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                     <Link
                       href="/register"
-                      className="px-5 py-2.5 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] text-white rounded-full text-sm font-semibold shadow-lg shadow-[#4eafc4]/25 hover:shadow-[#4eafc4]/40 transition-all duration-300"
+                      className="px-5 py-2.5 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-full text-sm font-semibold shadow-lg shadow-[#4eafc4]/25 hover:shadow-[#4eafc4]/45 transition-all duration-300"
                     >
                       Sign Up
                     </Link>
@@ -273,147 +266,194 @@ export function Navbar() {
               )}
             </div>
 
-            {/* Mobile toggle */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className={`md:hidden p-2 rounded-lg transition-colors ${
-                scrolled || mobileOpen
-                  ? "text-[#1c3557] hover:bg-[#eef3f7]"
-                  : "text-white hover:bg-white/10"
-              }`}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile: search + burger */}
+            <div className="md:hidden flex items-center gap-1">
+              <button
+                onClick={() => setSearchOpen((v) => !v)}
+                className={`p-2.5 rounded-xl transition-colors ${
+                  scrolled ? "text-[#1c3557]/70 hover:bg-[#f0f7fa]" : "text-white/80 hover:bg-white/10"
+                }`}
+                aria-label="Search"
+              >
+                <Search className="w-[18px] h-[18px]" />
+              </button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className={`p-2.5 rounded-xl transition-colors ${
+                  scrolled || mobileOpen ? "text-[#1c3557] hover:bg-[#f0f7fa]" : "text-white hover:bg-white/10"
+                }`}
+                aria-label="Toggle menu"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {mobileOpen ? (
+                    <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                      <X className="w-5 h-5" />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                      <Menu className="w-5 h-5" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            </div>
           </div>
         </div>
 
-        {/* Search Bar */}
+        {/* Desktop Search Panel */}
         <AnimatePresence>
           {searchOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white/95 backdrop-blur-xl border-t border-[#1c3557]/8 overflow-hidden"
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="bg-white/98 backdrop-blur-2xl border-t border-[#1c3557]/6 overflow-hidden hidden md:block"
             >
-              <div className="max-w-7xl mx-auto px-6 py-4">
-                <div className="relative max-w-xl mx-auto">
+              <form onSubmit={handleSearch} className="max-w-7xl mx-auto px-6 py-4">
+                <div className="relative max-w-2xl mx-auto">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64788f]" />
                   <input
-                    autoFocus
+                    ref={searchRef}
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search resources, courses..."
-                    className="w-full pl-11 pr-4 py-3 bg-[#eef3f7] rounded-xl text-[#0f1e35] placeholder:text-[#64788f] outline-none focus:ring-2 focus:ring-[#4eafc4]/30 text-sm"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && searchQuery.trim()) {
-                        router.push(
-                          `/resources?q=${encodeURIComponent(searchQuery)}`
-                        );
-                        setSearchOpen(false);
-                      }
-                    }}
+                    placeholder="Search resources, courses, handouts..."
+                    className="w-full pl-11 pr-14 py-3 bg-[#f0f7fa] rounded-2xl text-[#0f1e35] placeholder:text-[#64788f]/60 outline-none focus:ring-2 focus:ring-[#4eafc4]/30 focus:bg-white text-sm transition-all"
                   />
+                  <kbd className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#64788f]/50 bg-[#e8edf2] px-2 py-0.5 rounded-md font-mono">Enter</kbd>
                 </div>
-              </div>
+              </form>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Search */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ y: -60, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -60, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="md:hidden fixed top-16 left-0 right-0 z-40 bg-white/98 backdrop-blur-2xl border-b border-[#1c3557]/6 px-4 py-3 shadow-lg"
+          >
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64788f]" />
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search resources..."
+                  className="w-full pl-11 pr-4 py-3 bg-[#f0f7fa] rounded-2xl text-[#0f1e35] placeholder:text-[#64788f]/60 outline-none focus:ring-2 focus:ring-[#4eafc4]/30 text-sm"
+                />
+              </div>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden"
-            onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-40 md:hidden"
           >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-[#0f1e35]/60 backdrop-blur-sm"
+              onClick={() => setMobileOpen(false)}
+            />
+            {/* Drawer */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col pt-20 px-5 sm:px-6 overflow-y-auto"
+              className="absolute right-0 top-0 bottom-0 w-[82%] max-w-[340px] bg-white flex flex-col shadow-2xl"
             >
-              <div className="flex flex-col gap-1">
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-5 py-5 border-b border-[#1c3557]/6">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center">
+                    <GraduationCap className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-bold text-[#1c3557]" style={{ fontFamily: "'Playfair Display', serif" }}>VirtualU</span>
+                </div>
+                <button onClick={() => setMobileOpen(false)} className="p-2 rounded-xl hover:bg-[#f0f7fa] text-[#64788f]">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Nav links */}
+              <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
                 {navLinks.map((link, i) => {
                   const active = isActive(link.href);
                   return (
                     <motion.div
                       key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
+                      initial={{ opacity: 0, x: 24 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05, duration: 0.3 }}
+                      transition={{ delay: i * 0.04, duration: 0.25 }}
                     >
                       <Link
                         href={link.href}
-                        className={`block px-5 py-3.5 rounded-xl text-base font-medium transition-colors ${
-                          active
-                            ? "bg-[#e8f4f7] text-[#4eafc4]"
-                            : "text-[#1c3557] hover:bg-[#eef3f7]"
-                        }`}
                         onClick={() => setMobileOpen(false)}
+                        className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-medium transition-all ${
+                          active
+                            ? "bg-gradient-to-r from-[#e8f4f7] to-[#f0fafb] text-[#4eafc4] shadow-sm"
+                            : "text-[#1c3557] hover:bg-[#f8fafb]"
+                        }`}
                       >
                         {link.label}
+                        {active && <div className="w-1.5 h-1.5 rounded-full bg-[#4eafc4]" />}
                       </Link>
                     </motion.div>
                   );
                 })}
-              </div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="mt-auto py-8"
-              >
+              </nav>
+
+              {/* Mobile bottom actions */}
+              <div className="px-4 py-5 border-t border-[#1c3557]/6 space-y-2.5">
                 {user ? (
-                  <div className="flex flex-col gap-3">
-                    <Link
-                      href="/upload"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] text-white rounded-2xl font-semibold text-base shadow-lg"
-                    >
-                      <Upload className="w-5 h-5" />
-                      Upload Resource
+                  <>
+                    <div className="flex items-center gap-3 px-3 py-3 bg-[#f8fafb] rounded-xl mb-3">
+                      <span className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1c3557] to-[#4eafc4] text-white flex items-center justify-center text-xs font-bold">{initials(user.name)}</span>
+                      <div>
+                        <p className="text-sm font-semibold text-[#0f1e35]">{user.name}</p>
+                        <p className="text-xs text-[#64788f]">{user.role}</p>
+                      </div>
+                    </div>
+                    <Link href="/upload" onClick={() => setMobileOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full px-5 py-3.5 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-2xl font-semibold text-sm shadow-lg">
+                      <Upload className="w-4 h-4" /> Upload Resource
                     </Link>
-                    <button
-                      onClick={() => {
-                        setMobileOpen(false);
-                        onLogout();
-                      }}
-                      className="flex items-center justify-center gap-2 w-full px-6 py-4 border-2 border-[#1c3557]/10 text-[#1c3557] rounded-2xl font-semibold text-base"
-                    >
-                      <LogOut className="w-5 h-5" />
-                      Log out
+                    <button onClick={() => { setMobileOpen(false); onLogout(); }}
+                      className="flex items-center justify-center gap-2 w-full px-5 py-3.5 border border-red-100 bg-red-50 text-red-500 rounded-2xl font-semibold text-sm">
+                      <LogOut className="w-4 h-4" /> Log out
                     </button>
-                  </div>
+                  </>
                 ) : (
-                  <div className="flex flex-col gap-3">
-                    <Link
-                      href="/login"
-                      onClick={() => setMobileOpen(false)}
-                      className="block text-center px-6 py-4 border-2 border-[#1c3557]/10 text-[#1c3557] rounded-2xl font-semibold text-base hover:bg-[#eef3f7] transition-colors"
-                    >
+                  <>
+                    <Link href="/login" onClick={() => setMobileOpen(false)}
+                      className="block text-center w-full px-5 py-3.5 border-2 border-[#1c3557]/10 text-[#1c3557] rounded-2xl font-semibold text-sm hover:bg-[#f0f7fa] transition-colors">
                       Login
                     </Link>
-                    <Link
-                      href="/register"
-                      onClick={() => setMobileOpen(false)}
-                      className="block text-center px-6 py-4 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] text-white rounded-2xl font-semibold text-base shadow-lg"
-                    >
-                      Sign Up
+                    <Link href="/register" onClick={() => setMobileOpen(false)}
+                      className="block text-center w-full px-5 py-3.5 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-2xl font-semibold text-sm shadow-lg">
+                      Sign Up Free
                     </Link>
-                  </div>
+                  </>
                 )}
-              </motion.div>
+              </div>
             </motion.div>
           </motion.div>
         )}
