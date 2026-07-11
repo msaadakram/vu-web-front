@@ -32,6 +32,8 @@ export type ApiBlog = {
   status: BlogStatus;
   aiModel: string;
   errorMessage: string;
+  coverImage?: string;
+  type: "blog" | "news" | "resource";
   createdAt: string;
   updatedAt: string;
 };
@@ -74,7 +76,7 @@ export async function getResourceBlog(
   return api(`/resources/${resourceId}/blog`);
 }
 
-/** GET /api/blog — list published posts */
+/** GET /api/blog — list published blog posts */
 export async function listBlogs(params?: {
   category?: string;
   q?: string;
@@ -91,9 +93,47 @@ export async function listBlogs(params?: {
   return api(`/blog${query ? `?${query}` : ""}`);
 }
 
-/** GET /api/blog/:slug — fetch single published post */
+/** GET /api/news — list published news posts */
+export async function listNews(params?: {
+  category?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+}): Promise<BlogListResponse> {
+  const searchParams = new URLSearchParams();
+  if (params?.category && params.category !== "All")
+    searchParams.set("category", params.category);
+  if (params?.q) searchParams.set("q", params.q);
+  if (params?.page) searchParams.set("page", String(params.page));
+  if (params?.limit) searchParams.set("limit", String(params.limit));
+  const query = searchParams.toString();
+  return api(`/news${query ? `?${query}` : ""}`);
+}
+
+/** GET /api/blog/:slug — fetch single published blog post by slug */
 export async function getBlogBySlug(
   slug: string
 ): Promise<BlogSingleResponse> {
   return api(`/blog/${encodeURIComponent(slug)}`);
+}
+
+/** GET /api/news/:slug — fetch single published news post by slug */
+export async function getNewsBySlug(
+  slug: string
+): Promise<BlogSingleResponse> {
+  return api(`/news/${encodeURIComponent(slug)}`);
+}
+
+/** GET /api/blog/id/:id — fetch blog/news post by ID (used for generation polling) */
+export async function getBlogById(
+  id: string
+): Promise<BlogSingleResponse> {
+  return api(`/blog/id/${encodeURIComponent(id)}`);
+}
+
+/** GET /api/news/id/:id — fetch news post by ID (used for generation polling) */
+export async function getNewsById(
+  id: string
+): Promise<BlogSingleResponse> {
+  return api(`/news/id/${encodeURIComponent(id)}`);
 }

@@ -24,7 +24,8 @@ type BlogEntry = {
   _id: string;
   title: string;
   slug: string;
-  type: "resource" | "news";
+  coverImage?: string;
+  type: "resource" | "news" | "blog";
   status: "generating" | "published" | "failed";
   category: string;
   createdAt: string;
@@ -41,17 +42,31 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [blogRes, resourceRes] = await Promise.all([
+      // Fetch both blog posts AND news posts so the dashboard shows all content
+      const [blogRes, newsRes, resourceRes] = await Promise.all([
         api<{
           status: string;
           data: { blogs: BlogEntry[]; categories: string[] };
         }>("/blog?limit=50"),
+        api<{
+          status: string;
+          data: { blogs: BlogEntry[]; categories: string[] };
+        }>("/news?limit=50"),
         api<{ status: string; data: { resources: ApiResource[] } }>(
           "/resources"
         ),
       ]);
 
-      setBlogs(blogRes.data.blogs || []);
+      // Merge and sort by createdAt descending
+      const merged = [
+        ...(blogRes.data.blogs || []),
+        ...(newsRes.data.blogs || []),
+      ].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setBlogs(merged);
       setResources(resourceRes.data.resources || []);
     } catch {
       setBlogs([]);
@@ -65,9 +80,11 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  const handleDeleteBlog = async (id: string) => {
+  const handleDeleteBlog = async (id: string, type: BlogEntry["type"]) => {
     try {
-      await api(`/blog/${id}/delete`, { method: "DELETE" });
+      // Use correct REST endpoint: DELETE /blog/:id or DELETE /news/:id
+      const endpoint = type === "news" ? `/news/${id}` : `/blog/${id}`;
+      await api(endpoint, { method: "DELETE" });
       setBlogs((prev) => prev.filter((b) => b._id !== id));
       toast.success("Post deleted");
     } catch {
@@ -75,9 +92,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleRetry = async (id: string) => {
+  const handleRetry = async (id: string, type: BlogEntry["type"]) => {
     try {
-      await api(`/blog/${id}/retry`, { method: "POST" });
+      // Use correct REST endpoint: POST /blog/:id/generate or POST /news/:id/generate
+      const endpoint =
+        type === "news" ? `/news/${id}/generate` : `/blog/${id}/generate`;
+      await api(endpoint, { method: "POST" });
       toast.success("Regeneration started");
       fetchData();
     } catch {
@@ -96,7 +116,13 @@ export default function AdminDashboard() {
   };
 
   const content =
-    tab === "uploads" ? resources : tab === "all" ? [...blogs] : tab === "news" ? blogs.filter((b) => b.type === "news") : blogs.filter((b) => b.type === "resource");
+    tab === "uploads"
+      ? resources
+      : tab === "all"
+      ? [...blogs]
+      : tab === "news"
+      ? blogs.filter((b) => b.type === "news")
+      : blogs.filter((b) => b.type !== "news");
 
   const statusBadge = (status: string) => {
     switch (status) {
@@ -220,8 +246,8 @@ export default function AdminDashboard() {
           className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
         >
           {loading ? (
-            <div className="p-12 text-center text-[#94a3b8] text-sm">
-              Loading...
+            <div className="p-12 text-center">
+              <Loader2 className="w-6 h-6 animate-spin text-[#4eafc4] mx-auto" />
             </div>
           ) : tab !== "uploads" ? (
             content.length === 0 ? (
@@ -267,7 +293,7 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                      {blog.status === "published" && (
+                      {blog.status === "published" && blog.slug && (
                         <Link
                           href={
                             blog.type === "news"
@@ -281,7 +307,7 @@ export default function AdminDashboard() {
                       )}
                       {blog.status === "failed" && (
                         <button
-                          onClick={() => handleRetry(blog._id)}
+                          onClick={() => handleRetry(blog._id, blog.type)}
                           className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-amber-500 transition-colors"
                           title="Retry generation"
                         >
@@ -300,7 +326,7 @@ export default function AdminDashboard() {
                         title="Delete this post?"
                         description="This will permanently delete the post and its cover image. This action cannot be undone."
                         confirmText="Delete"
-                        onConfirm={() => handleDeleteBlog(blog._id)}
+                        onConfirm={() => handleDeleteBlog(blog._id, blog.type)}
                       />
                     </div>
                   </motion.div>
@@ -324,7 +350,12 @@ export default function AdminDashboard() {
           ) : (
             <div className="divide-y divide-gray-50">
               {resources.map((r, i) => {
-                const meta = RESOURCE_TYPE_META[r.type] || { icon: "📄", badge: "bg-gray-100 text-gray-700" };
+                const meta =
+                  RESOURCE_TYPE_META[r.type] || {
+                    icon: "📄",
+                    badge: "bg-gray-100 text-gray-700",
+                    label: r.type,
+                  };
                 return (
                   <motion.div
                     key={r._id}
@@ -338,7 +369,11 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${meta.badge}`}>
+                        <span
+                          className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                            meta.badge
+                          }`}
+                        >
                           {meta.label}
                         </span>
                         {r.course && (
@@ -348,6 +383,9 @@ export default function AdminDashboard() {
                         )}
                         <span className="text-[#94a3b8] text-[10px]">
                           {formatFileSize(r.file.size)}
+                        </span>
+                        <span className="text-[#94a3b8] text-[10px]">
+                          {formatDate(r.createdAt)}
                         </span>
                       </div>
                       <p className="text-[#0f172a] text-sm font-medium truncate">

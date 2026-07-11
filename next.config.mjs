@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  // Re-enabled: StrictMode catches double-render bugs and deprecated API usage in dev
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       {
@@ -29,8 +30,8 @@ const nextConfig = {
     if (!backendUrl) {
       console.warn(
         "[next.config] WARNING: BACKEND_URL is not set — /api/* rewrites are disabled.\n" +
-        "  - For local dev: add BACKEND_URL=http://localhost:5000 to .env.local\n" +
-        "  - For production: set BACKEND_URL in your Vercel / Heroku config vars."
+          "  - For local dev: add BACKEND_URL=http://localhost:5000 to .env.local\n" +
+          "  - For production: set BACKEND_URL in your Vercel / Heroku config vars."
       );
       return [];
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import { getNewsById } from "@/lib/blog";
 
 const CATEGORIES = [
   "General",
@@ -24,7 +25,12 @@ const CATEGORIES = [
   "Research",
 ];
 
-const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/jpg"];
+const ACCEPTED_IMAGE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/jpg",
+];
 
 export default function AdminCreateNews() {
   const router = useRouter();
@@ -37,7 +43,16 @@ export default function AdminCreateNews() {
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [generating, setGenerating] = useState(false);
   const [step, setStep] = useState<"form" | "generating" | "done">("form");
-  const pollRef = useRef<ReturnType<typeof setInterval>>();
+  const pollRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  // Cleanup: revoke object URL and clear interval on unmount
+  useEffect(() => {
+    return () => {
+      if (coverPreview) URL.revokeObjectURL(coverPreview);
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const pollForCompletion = useCallback(
     (postId: string, startTime: number) => {
@@ -46,11 +61,7 @@ export default function AdminCreateNews() {
 
       pollRef.current = setInterval(async () => {
         try {
-          const res = await api<{
-            status: string;
-            data: { blog: { status: string; slug?: string } };
-          }>(`/news/id/${postId}`);
-
+          const res = await getNewsById(postId);
           const blog = res.data.blog;
 
           if (blog.status === "published" && blog.slug) {
@@ -104,6 +115,8 @@ export default function AdminCreateNews() {
       return;
     }
 
+    // Revoke previous preview URL before creating a new one
+    if (coverPreview) URL.revokeObjectURL(coverPreview);
     setCoverFile(file);
     setCoverPreview(URL.createObjectURL(file));
   };
@@ -161,7 +174,7 @@ export default function AdminCreateNews() {
         body: { description: description.trim() },
       });
 
-      // 3. Poll for completion
+      // 3. Poll for completion using typed helper
       pollForCompletion(postId, Date.now());
     } catch (err) {
       setGenerating(false);
@@ -232,14 +245,18 @@ export default function AdminCreateNews() {
                 Generating Article
               </h3>
               <p className="text-[#64788b] text-sm max-w-sm mx-auto">
-                Our AI is writing a comprehensive, SEO-optimized article based on your title.
-                This usually takes 30–60 seconds.
+                Our AI is writing a comprehensive, SEO-optimized article based
+                on your title. This usually takes 30–60 seconds.
               </p>
               <div className="mt-6 w-48 h-1.5 bg-gray-100 rounded-full mx-auto overflow-hidden">
                 <motion.div
                   initial={{ x: "-100%" }}
                   animate={{ x: "100%" }}
-                  transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 1.4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   className="h-full w-1/2 bg-gradient-to-r from-[#4eafc4] to-[#2dd4bf] rounded-full"
                 />
               </div>
