@@ -81,13 +81,13 @@ function StatCard({ stat, i }: { stat: { icon: typeof Users; label: string; bg: 
       className="relative bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-[#1c3557]/5 hover:shadow-xl hover:shadow-[#1c3557]/6 transition-shadow duration-300 overflow-hidden group"
     >
       <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${gradient}`} />
-      <div className={`w-12 h-12 rounded-2xl ${bg} flex items-center justify-center mb-5`}>
-        <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${color}`} />
+      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${bg} flex items-center justify-center mb-4 sm:mb-5`}>
+        <Icon className={`w-4 h-4 sm:w-6 sm:h-6 ${color}`} />
       </div>
-      <div className="text-[#0f1e35] font-extrabold" style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", lineHeight: 1 }}>
+      <div className="text-[#0f1e35] font-extrabold" style={{ fontSize: "clamp(1.3rem, 5vw, 2rem)", lineHeight: 1 }}>
         <AnimatedCounter target={value} suffix="+" />
       </div>
-      <div className="text-[#64788f] text-xs sm:text-sm mt-1.5 font-medium">{label}</div>
+      <div className="text-[#64788f] text-[11px] sm:text-sm mt-1.5 font-medium leading-tight">{label}</div>
     </motion.div>
   );
 }
@@ -122,7 +122,7 @@ function FeaturedPost({ post }: { post: LatestPost }) {
         </span>
         <h3
           className="text-white mb-3 group-hover:text-[#7dd4e8] transition-colors duration-300"
-          style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 700, fontSize: "clamp(1.15rem, 2.5vw, 1.4rem)", lineHeight: 1.3 }}
+          style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 700, fontSize: "clamp(1.05rem, 2.5vw, 1.4rem)", lineHeight: 1.3 }}
         >
           {post.title}
         </h3>
@@ -200,7 +200,7 @@ function SectionHeading({ tag, title, subtitle, light = false }: { tag: string; 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <motion.div ref={ref} initial="hidden" animate={inView ? "visible" : "hidden"} className="text-center mb-12 sm:mb-16">
+    <motion.div ref={ref} initial="hidden" animate={inView ? "visible" : "hidden"} className="text-center mb-10 sm:mb-16">
       <motion.span
         variants={fadeUp} custom={0}
         className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase mb-4 ${
@@ -214,9 +214,9 @@ function SectionHeading({ tag, title, subtitle, light = false }: { tag: string; 
         style={{
           fontFamily: "var(--font-playfair), serif",
           fontWeight: 800,
-          fontSize: "clamp(1.5rem, 4vw, 2.6rem)",
+          fontSize: "clamp(1.35rem, 5vw, 2.6rem)",
           color: light ? "white" : "#0f1e35",
-          lineHeight: 1.2,
+          lineHeight: 1.25,
         }}
       >
         {title}
@@ -224,7 +224,7 @@ function SectionHeading({ tag, title, subtitle, light = false }: { tag: string; 
       {subtitle && (
         <motion.p
           variants={fadeUp} custom={2}
-          className={`mt-4 max-w-xl mx-auto text-sm sm:text-base leading-relaxed px-2 ${
+          className={`mt-3 max-w-xl mx-auto text-sm sm:text-base leading-relaxed px-2 ${
             light ? "text-white/55" : "text-[#64788f]"
           }`}
         >
@@ -281,7 +281,6 @@ const programs = [
   },
 ];
 
-// Floating particle component
 function Particle({ delay, x, y, size }: { delay: number; x: string; y: string; size: number }) {
   return (
     <motion.div
@@ -323,25 +322,27 @@ export default function HomePage() {
     <div className="overflow-x-hidden">
 
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section ref={heroRef} className="relative min-h-[95vh] flex items-center bg-gradient-to-br from-[#060f1c] via-[#0f1e35] to-[#132843] overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative min-h-[100svh] sm:min-h-[95vh] flex items-center bg-gradient-to-br from-[#060f1c] via-[#0f1e35] to-[#132843] overflow-hidden"
+      >
         {/* Animated background blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={{ scale: [1, 1.2, 1], opacity: [0.12, 0.22, 0.12], x: [0, 20, 0], y: [0, -20, 0] }}
             transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[-5%] right-[10%] w-[500px] h-[500px] rounded-full bg-[#4eafc4] blur-[130px]"
+            className="absolute top-[-5%] right-[10%] w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full bg-[#4eafc4] blur-[100px] sm:blur-[130px]"
           />
           <motion.div
             animate={{ scale: [1.2, 1, 1.2], opacity: [0.08, 0.18, 0.08] }}
             transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute bottom-[10%] left-[5%] w-[450px] h-[450px] rounded-full bg-[#2dd4bf] blur-[120px]"
+            className="absolute bottom-[10%] left-[5%] w-[250px] h-[250px] sm:w-[450px] sm:h-[450px] rounded-full bg-[#2dd4bf] blur-[90px] sm:blur-[120px]"
           />
           <motion.div
             animate={{ scale: [1, 1.15, 1], opacity: [0.06, 0.12, 0.06] }}
             transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-            className="absolute top-[40%] left-[40%] w-[350px] h-[350px] rounded-full bg-[#a855f7] blur-[100px]"
+            className="absolute top-[40%] left-[40%] w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] rounded-full bg-[#a855f7] blur-[80px] sm:blur-[100px]"
           />
-          {/* Grid pattern */}
           <div
             className="absolute inset-0 opacity-[0.04]"
             style={{
@@ -349,7 +350,6 @@ export default function HomePage() {
               backgroundSize: "60px 60px",
             }}
           />
-          {/* Floating particles */}
           <Particle delay={0} x="15%" y="20%" size={8} />
           <Particle delay={1.5} x="80%" y="30%" size={5} />
           <Particle delay={0.8} x="60%" y="70%" size={10} />
@@ -359,30 +359,43 @@ export default function HomePage() {
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
-          className="relative w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-24 sm:pb-32"
+          className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-20 sm:pb-32"
         >
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left content */}
-            <div>
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+
+            {/* ── Left content ── */}
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+
+              {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#4eafc4]/12 border border-[#4eafc4]/25 rounded-full mb-6 sm:mb-8"
+                className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#4eafc4]/12 border border-[#4eafc4]/25 rounded-full mb-5 sm:mb-8"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                <Sparkles className="w-3.5 h-3.5 text-[#4eafc4] shrink-0" />
-                <span className="text-[#7dd4e8] text-[11px] sm:text-xs font-semibold tracking-wider">Pakistan&apos;s #1 Virtual University Platform</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#4eafc4] shrink-0" />
+                <span className="text-[#7dd4e8] text-[10px] sm:text-xs font-semibold tracking-wide">
+                  Pakistan&apos;s #1 Virtual University Platform
+                </span>
               </motion.div>
 
+              {/* H1 — mobile-first font scale */}
               <motion.h1
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1, ease }}
-                style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, color: "white", lineHeight: 1.1, fontSize: "clamp(2rem, 7vw, 3.8rem)" }}
+                className="text-white"
+                style={{
+                  fontFamily: "var(--font-playfair), serif",
+                  fontWeight: 800,
+                  lineHeight: 1.12,
+                  fontSize: "clamp(1.75rem, 8vw, 3.8rem)",
+                  letterSpacing: "-0.01em",
+                }}
               >
                 Learn Smarter,{" "}
-                <span className="relative">
+                <span className="relative inline-block">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4eafc4] via-[#7dd4e8] to-[#2dd4bf]">
                     Achieve More
                   </span>
@@ -397,22 +410,22 @@ export default function HomePage() {
                 {" "}with VirtualU
               </motion.h1>
 
+              {/* Subtitle */}
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.25 }}
-                className="mt-5 sm:mt-6 text-white/60 leading-relaxed max-w-lg"
-                style={{ fontSize: "clamp(0.95rem, 2.5vw, 1.05rem)" }}
+                className="mt-4 sm:mt-6 text-white/60 leading-relaxed max-w-sm sm:max-w-lg text-sm sm:text-base"
               >
                 Access thousands of study resources, expert blogs, and comprehensive materials. Your path to academic excellence starts here.
               </motion.p>
 
-              {/* Feature pills */}
+              {/* Feature pills — 2×2 grid on mobile, wrap on larger */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.35 }}
-                className="mt-5 flex flex-wrap gap-2"
+                className="mt-4 sm:mt-5 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 w-full sm:w-auto"
               >
                 {["Free Resources", "AI Study Guides", "Past Papers", "Handouts"].map((f, i) => (
                   <motion.span
@@ -420,47 +433,48 @@ export default function HomePage() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.4 + i * 0.08 }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/6 border border-white/10 text-white/65 rounded-full text-xs font-medium"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white/6 border border-white/10 text-white/65 rounded-full text-xs font-medium"
                   >
-                    <CheckCircle2 className="w-3 h-3 text-[#4eafc4]" />{f}
+                    <CheckCircle2 className="w-3 h-3 text-[#4eafc4] shrink-0" />{f}
                   </motion.span>
                 ))}
               </motion.div>
 
+              {/* CTA buttons — full-width stack on mobile, row on sm+ */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.45 }}
-                className="mt-8 sm:mt-10 flex flex-wrap gap-3"
+                className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 w-full sm:w-auto"
               >
-                <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
+                <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                   <Link
                     href="/resources"
-                    className="group flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-full font-bold shadow-2xl shadow-[#4eafc4]/35 hover:shadow-[#4eafc4]/55 transition-shadow duration-300 text-sm sm:text-base"
+                    className="group flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-full font-bold shadow-2xl shadow-[#4eafc4]/35 hover:shadow-[#4eafc4]/55 transition-shadow duration-300 text-sm sm:text-base"
                   >
-                    <Download className="w-4 h-4" />
+                    <Download className="w-4 h-4 shrink-0" />
                     Browse Resources
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
+                <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                   <Link
                     href="/blog"
-                    className="flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 bg-white/8 backdrop-blur-sm border border-white/15 text-white rounded-full font-semibold hover:bg-white/15 hover:border-white/25 transition-all duration-300 text-sm sm:text-base"
+                    className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 bg-white/8 backdrop-blur-sm border border-white/15 text-white rounded-full font-semibold hover:bg-white/15 hover:border-white/25 transition-all duration-300 text-sm sm:text-base"
                   >
-                    <BookOpen className="w-4 h-4" />
+                    <BookOpen className="w-4 h-4 shrink-0" />
                     Read Blog
                   </Link>
                 </motion.div>
               </motion.div>
 
-              {/* Inline stats */}
+              {/* Inline mini-stats */}
               {loaded && (stats?.resources || 0) > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="mt-10 sm:mt-12 flex flex-wrap gap-6 sm:gap-8"
+                  className="mt-8 sm:mt-12 flex justify-center lg:justify-start gap-6 sm:gap-8 w-full"
                 >
                   {[
                     { val: `${stats!.resources}+`, label: "Resources" },
@@ -472,7 +486,7 @@ export default function HomePage() {
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.65 + i * 0.08 }}
-                      className="flex flex-col"
+                      className="flex flex-col items-center lg:items-start"
                     >
                       <span className="text-white font-extrabold text-xl sm:text-2xl">{s.val}</span>
                       <span className="text-white/45 text-xs mt-0.5">{s.label}</span>
@@ -482,14 +496,13 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* Right: resource card */}
+            {/* ── Right: resource card (desktop only) ── */}
             <motion.div
               initial={{ opacity: 0, x: 60, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ duration: 0.9, delay: 0.2, ease }}
               className="hidden lg:block relative"
             >
-              {/* Glow */}
               <div className="absolute inset-4 bg-[#4eafc4]/15 rounded-3xl blur-2xl" />
               <motion.div
                 whileHover={{ y: -6 }}
@@ -549,15 +562,15 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ STATS ═══════════════════ */}
-      <section className="py-16 sm:py-20 bg-[#f8fafc] relative overflow-hidden">
+      <section className="py-12 sm:py-20 bg-[#f8fafc] relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent pointer-events-none" />
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
             {statCards.map((stat, i) =>
               loaded ? (
                 <StatCard key={stat.label} stat={stat} i={i} />
               ) : (
-                <Skeleton key={stat.label} className="h-[170px] sm:h-[190px] rounded-3xl" />
+                <Skeleton key={stat.label} className="h-[140px] sm:h-[190px] rounded-3xl" />
               )
             )}
           </div>
@@ -565,14 +578,14 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
-      <section className="py-16 sm:py-20 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-20 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             tag="Why VirtualU"
             title="Everything You Need to Excel"
             subtitle="We bring the best study resources, expert content, and modern tools together in one place."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {features.map((f, i) => (
               <motion.div
                 key={f.title}
@@ -581,15 +594,15 @@ export default function HomePage() {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className="group relative bg-white border border-[#1c3557]/6 rounded-3xl p-6 hover:shadow-xl hover:shadow-[#1c3557]/6 transition-all duration-300 overflow-hidden"
+                className="group relative bg-white border border-[#1c3557]/6 rounded-3xl p-5 sm:p-6 hover:shadow-xl hover:shadow-[#1c3557]/6 transition-all duration-300 overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#f8fafc] to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative">
-                  <div className={`w-12 h-12 rounded-2xl ${f.bg} flex items-center justify-center mb-5`}>
-                    <f.icon className={`w-5 h-5 ${f.color}`} />
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${f.bg} flex items-center justify-center mb-4 sm:mb-5`}>
+                    <f.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${f.color}`} />
                   </div>
-                  <h3 className="text-[#0f1e35] font-bold mb-2 text-base">{f.title}</h3>
-                  <p className="text-[#64788f] text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="text-[#0f1e35] font-bold mb-1.5 sm:mb-2 text-sm sm:text-base">{f.title}</h3>
+                  <p className="text-[#64788f] text-xs sm:text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -598,8 +611,8 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ LATEST ARTICLES ═══════════════════ */}
-      <section className="py-16 sm:py-24 bg-[#f8fafc] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-24 bg-[#f8fafc] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             tag="Latest Articles"
             title="Expert Knowledge, Student Success"
@@ -607,25 +620,25 @@ export default function HomePage() {
           />
           {loaded ? (
             latest.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 {featured && <FeaturedPost post={featured} />}
-                <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+                <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {rest.map((post, i) => <SmallPost key={post._id} post={post} i={i + 1} />)}
                 </div>
               </div>
             ) : (
-              <div className="text-center py-20">
-                <div className="w-16 h-16 rounded-3xl bg-[#e8f4f7] flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-7 h-7 text-[#4eafc4]" />
+              <div className="text-center py-16 sm:py-20">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-[#e8f4f7] flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-[#4eafc4]" />
                 </div>
-                <h3 className="text-[#0f1e35] font-bold mb-2 text-lg" style={{ fontFamily: "var(--font-playfair), serif" }}>No articles yet</h3>
+                <h3 className="text-[#0f1e35] font-bold mb-2 text-base sm:text-lg" style={{ fontFamily: "var(--font-playfair), serif" }}>No articles yet</h3>
                 <p className="text-[#64788f] text-sm max-w-sm mx-auto">Articles appear once generated by admins. Check back soon!</p>
               </div>
             )
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Skeleton className="lg:row-span-2 h-[440px] rounded-3xl" />
-              {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-[210px] rounded-2xl" />)}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+              <Skeleton className="lg:row-span-2 h-[300px] sm:h-[440px] rounded-3xl" />
+              {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-[180px] sm:h-[210px] rounded-2xl" />)}
             </div>
           )}
           {latest.length > 0 && (
@@ -633,12 +646,12 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mt-12"
+              className="text-center mt-8 sm:mt-12"
             >
               <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/blog"
-                  className="inline-flex items-center gap-2 px-7 sm:px-8 py-3.5 border-2 border-[#1c3557] text-[#1c3557] rounded-full font-bold hover:bg-[#1c3557] hover:text-white transition-all duration-300 group text-sm sm:text-base"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 border-2 border-[#1c3557] text-[#1c3557] rounded-full font-bold hover:bg-[#1c3557] hover:text-white transition-all duration-300 group text-sm sm:text-base"
                 >
                   View All Articles
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -650,14 +663,14 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ PROGRAMS ═══════════════════ */}
-      <section className="py-16 sm:py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-24 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             tag="Academic Programs"
             title="Programs at Virtual University"
             subtitle="Explore undergraduate, graduate, diploma, and short course programs designed for all academic interests."
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {programs.map((p, i) => (
               <motion.div
                 key={p.tag}
@@ -669,19 +682,21 @@ export default function HomePage() {
               >
                 <Link
                   href={p.href}
-                  className={`group flex flex-col bg-gradient-to-br ${p.gradient} border ${p.border} rounded-3xl p-6 sm:p-8 hover:shadow-2xl ${p.hoverShadow} transition-all duration-300 h-full`}
+                  className={`group flex flex-col bg-gradient-to-br ${p.gradient} border ${p.border} rounded-3xl p-5 sm:p-8 hover:shadow-2xl ${p.hoverShadow} transition-all duration-300 h-full`}
                 >
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${p.iconGrad} flex items-center justify-center mb-5 shadow-lg`}>
-                    <p.icon className="w-7 h-7 text-white" />
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${p.iconGrad} flex items-center justify-center mb-4 sm:mb-5 shadow-lg`}>
+                    <p.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                   </div>
-                  <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-semibold mb-3 w-fit ${p.badge}`}>{p.tag}</span>
-                  <h3 className={`text-[#0f1e35] font-bold mb-3 text-lg leading-snug ${p.accentColor} transition-colors group-hover:translate-x-0`}
-                    style={{ fontFamily: "var(--font-playfair), serif" }}>
+                  <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-semibold mb-2.5 w-fit ${p.badge}`}>{p.tag}</span>
+                  <h3
+                    className={`text-[#0f1e35] font-bold mb-2.5 text-base sm:text-lg leading-snug`}
+                    style={{ fontFamily: "var(--font-playfair), serif" }}
+                  >
                     {p.title}
                   </h3>
-                  <p className="text-[#64788f] text-sm leading-relaxed flex-1">{p.desc}</p>
-                  <span className={`mt-5 text-sm font-bold flex items-center gap-2 group-hover:gap-3 transition-all ${p.accentColor}`}>
-                    Browse Programs <ArrowRight className="w-4 h-4" />
+                  <p className="text-[#64788f] text-xs sm:text-sm leading-relaxed flex-1">{p.desc}</p>
+                  <span className={`mt-4 text-xs sm:text-sm font-bold flex items-center gap-2 group-hover:gap-3 transition-all ${p.accentColor}`}>
+                    Browse Programs <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </span>
                 </Link>
               </motion.div>
@@ -691,12 +706,12 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mt-10 sm:mt-12"
+            className="text-center mt-8 sm:mt-12"
           >
             <motion.div whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}>
               <Link
                 href="/programs"
-                className="inline-flex items-center gap-2 px-7 sm:px-8 py-3.5 bg-gradient-to-r from-[#4eafc4] to-[#1c3557] text-white rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 group text-sm sm:text-base"
+                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-[#4eafc4] to-[#1c3557] text-white rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 group text-sm sm:text-base"
               >
                 View All Programs
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -707,12 +722,12 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ CTA ═══════════════════ */}
-      <section className="relative py-20 sm:py-28 bg-gradient-to-br from-[#060f1c] via-[#0f1e35] to-[#132843] overflow-hidden">
+      <section className="relative py-16 sm:py-28 bg-gradient-to-br from-[#060f1c] via-[#0f1e35] to-[#132843] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <motion.div
             animate={{ scale: [1, 1.3, 1], opacity: [0.08, 0.15, 0.08] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#4eafc4]/20 rounded-full blur-[80px]"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[900px] h-[400px] sm:h-[500px] bg-[#4eafc4]/20 rounded-full blur-[80px]"
           />
           <div
             className="absolute inset-0 opacity-[0.03]"
@@ -722,33 +737,38 @@ export default function HomePage() {
             }}
           />
         </div>
-        <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#4eafc4]/12 border border-[#4eafc4]/25 text-[#7dd4e8] rounded-full text-xs font-semibold tracking-widest uppercase mb-6">
+            <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-[#4eafc4]/12 border border-[#4eafc4]/25 text-[#7dd4e8] rounded-full text-[10px] sm:text-xs font-semibold tracking-widest uppercase mb-5 sm:mb-6">
               <Sparkles className="w-3 h-3" /> Join VirtualU Today
             </span>
             <h2
-              className="text-white mb-5"
-              style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: "clamp(1.75rem, 5vw, 3.2rem)", lineHeight: 1.18 }}
+              className="text-white mb-4 sm:mb-5"
+              style={{
+                fontFamily: "var(--font-playfair), serif",
+                fontWeight: 800,
+                fontSize: "clamp(1.5rem, 6vw, 3.2rem)",
+                lineHeight: 1.2,
+              }}
             >
               Ready to Ace Your{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4eafc4] via-[#7dd4e8] to-[#2dd4bf]">
                 Exams?
               </span>
             </h2>
-            <p className="text-white/55 mb-10 max-w-lg mx-auto leading-relaxed text-sm sm:text-base">
+            <p className="text-white/55 mb-7 sm:mb-10 max-w-lg mx-auto leading-relaxed text-sm sm:text-base">
               Get unlimited access to study guides, resources, and expert articles. Start your learning journey today — completely free.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
               <motion.div whileHover={{ scale: 1.04, y: -3 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/resources"
-                  className="inline-flex items-center gap-2 px-7 sm:px-8 py-4 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-full font-bold shadow-2xl shadow-[#4eafc4]/35 hover:shadow-[#4eafc4]/55 transition-shadow duration-300 text-sm sm:text-base"
+                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-full font-bold shadow-2xl shadow-[#4eafc4]/35 hover:shadow-[#4eafc4]/55 transition-shadow duration-300 text-sm sm:text-base"
                 >
                   <Download className="w-4 h-4" /> Get Started Free
                 </Link>
@@ -756,7 +776,7 @@ export default function HomePage() {
               <motion.div whileHover={{ scale: 1.04, y: -3 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/blog"
-                  className="inline-flex items-center gap-2 px-7 sm:px-8 py-4 bg-white/8 border border-white/15 text-white rounded-full font-semibold hover:bg-white/15 hover:border-white/25 transition-all duration-300 text-sm sm:text-base"
+                  className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-white/8 border border-white/15 text-white rounded-full font-semibold hover:bg-white/15 hover:border-white/25 transition-all duration-300 text-sm sm:text-base"
                 >
                   <BookOpen className="w-4 h-4" /> Explore Blogs
                 </Link>
