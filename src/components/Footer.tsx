@@ -65,22 +65,36 @@ export function Footer() {
 
   const onSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
+    const trimmed = email.trim();
+    if (!trimmed) {
       toast.error("Please enter your email");
       return;
     }
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      toast.error("Please enter a valid email");
+    if (!/^\S+@\S+\.\S+$/.test(trimmed)) {
+      toast.error("Please enter a valid email address");
       return;
     }
     setSubscribing(true);
-    // No backend newsletter endpoint yet — simulate success.
-    // Wire to a real endpoint when added.
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setEmail("");
+        toast.success(data.message || "Subscribed! We'll keep you updated.");
+      } else if (res.status === 409) {
+        toast.info(data.message || "This email is already subscribed.");
+      } else {
+        toast.error(data.message || "Subscription failed. Please try again.");
+      }
+    } catch {
+      toast.error("Network error. Please check your connection and try again.");
+    } finally {
       setSubscribing(false);
-      setEmail("");
-      toast.success("Subscribed! We'll keep you updated.");
-    }, 700);
+    }
   };
 
   return (
@@ -114,7 +128,8 @@ export function Footer() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your university email"
                 aria-label="Email address"
-                className="flex-1 lg:w-72 w-full px-5 py-3 bg-white/8 border border-white/15 rounded-full text-white placeholder:text-white/35 outline-none focus:border-[#4eafc4] focus:bg-white/12 transition-all text-sm"
+                disabled={subscribing}
+                className="flex-1 lg:w-72 w-full px-5 py-3 bg-white/8 border border-white/15 rounded-full text-white placeholder:text-white/35 outline-none focus:border-[#4eafc4] focus:bg-white/12 transition-all text-sm disabled:opacity-50"
               />
               <button
                 type="submit"
@@ -122,7 +137,7 @@ export function Footer() {
                 className="px-6 py-3 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] rounded-full font-semibold text-sm hover:shadow-lg hover:shadow-[#4eafc4]/25 transition-all whitespace-nowrap flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {subscribing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                Subscribe
+                {subscribing ? "Subscribing..." : "Subscribe"}
               </button>
             </form>
           </div>
@@ -217,18 +232,10 @@ export function Footer() {
             ))}
           </div>
           <div className="flex gap-5 text-xs text-white/35">
-            <Link href="/about" className="hover:text-white/70 transition-colors">
-              Privacy
-            </Link>
-            <Link href="/about" className="hover:text-white/70 transition-colors">
-              Terms
-            </Link>
-            <Link href="/about" className="hover:text-white/70 transition-colors">
-              Contact
-            </Link>
-            <Link href="/sitemap" className="hover:text-white/70 transition-colors">
-              Sitemap
-            </Link>
+            <Link href="/about" className="hover:text-white/70 transition-colors">Privacy</Link>
+            <Link href="/about" className="hover:text-white/70 transition-colors">Terms</Link>
+            <Link href="/about" className="hover:text-white/70 transition-colors">Contact</Link>
+            <Link href="/sitemap" className="hover:text-white/70 transition-colors">Sitemap</Link>
           </div>
         </div>
       </div>
