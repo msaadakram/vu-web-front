@@ -34,23 +34,26 @@ export function Footer() {
 
   const links = {
     Academics: [
+      { label: "BSCS Subjects List", href: "/programs" },
       { label: "Blog Articles", href: "/blog" },
       { label: "News & Updates", href: "/news" },
       { label: "Study Resources", href: "/resources" },
-      { label: "Academic Programs", href: "/programs" },
+      { label: "Opencourseware", href: "/resources" },
     ],
     University: [
       { label: "About Us", href: "/about" },
+      { label: "VU Admission Guide", href: "/about" },
       { label: "Fee Structure", href: "/fee-structure" },
       { label: "Grading Policy", href: "/grading" },
       { label: "Sitemap", href: "/sitemap" },
-      { label: "Upload Resource", href: "/upload" },
     ],
-    Resources: [
-      { label: "Browse All", href: "/resources" },
-      { label: "Assignments", href: "/resources?type=assignment" },
-      { label: "Handouts", href: "/resources?type=handout" },
-      { label: "Lecture Notes", href: "/resources?type=notes" },
+    Programs: [
+      { label: "BS Computer Sciences", href: "/programs#undergraduate" },
+      { label: "BS Software Engineering", href: "/programs#undergraduate" },
+      { label: "MBA / VU MBA", href: "/programs#graduate" },
+      { label: "BBA Virtual University", href: "/programs#undergraduate" },
+      { label: "MS Computer Science", href: "/programs#graduate" },
+      { label: "BS Accounting & Finance", href: "/programs#undergraduate" },
     ],
   };
 
@@ -118,7 +121,7 @@ export function Footer() {
                 Stay Updated with VirtualU
               </h3>
               <p className="text-white/50 text-sm">
-                Get the latest blogs and resources delivered to your inbox.
+                Get the latest BSCS subjects updates, opencourseware resources, and VU admission news delivered to your inbox.
               </p>
             </div>
             <form onSubmit={onSubscribe} className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
@@ -164,14 +167,32 @@ export function Footer() {
                   VirtualU
                 </span>
                 <span className="block text-[#4eafc4] text-[11px] font-medium tracking-[0.15em] uppercase">
-                  University
+                  Virtual University of Pakistan
                 </span>
               </div>
             </div>
-            <p className="text-white/50 text-sm leading-relaxed mb-7 max-w-xs">
-              Empowering students across Pakistan with quality education,
-              comprehensive study materials, and AI-assisted study guides.
+            <p className="text-white/50 text-sm leading-relaxed mb-4 max-w-xs">
+              Pakistan&apos;s #1 study hub for Virtual University students. Browse BSCS subjects list, opencourseware resources, BS Computer Sciences, BS Software Engineering, MBA, BBA, MS programs, uni admission guides, and VU LMS help.
             </p>
+            {/* SEO keyword links */}
+            <div className="flex flex-wrap gap-1.5 mb-6">
+              {[
+                { label: "BSCS Subjects", href: "/programs" },
+                { label: "Uni Admission", href: "/about" },
+                { label: "Opencourseware", href: "/resources" },
+                { label: "VU LMS", href: "/resources" },
+                { label: "VU MBA", href: "/programs#graduate" },
+                { label: "BS Software Eng", href: "/programs#undergraduate" },
+              ].map((kw) => (
+                <Link
+                  key={kw.label}
+                  href={kw.href}
+                  className="inline-block px-2.5 py-0.5 bg-white/6 border border-white/10 text-white/45 hover:text-[#4eafc4] hover:border-[#4eafc4]/30 rounded-full text-[11px] font-medium transition-colors duration-200"
+                >
+                  {kw.label}
+                </Link>
+              ))}
+            </div>
             <div className="flex flex-col gap-2.5">
               {[
                 { icon: Mail, text: "support@virtualu.edu.pk" },
@@ -217,7 +238,7 @@ export function Footer() {
       <div className="relative border-t border-white/8">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-center gap-4">
           <p className="text-white/35 text-xs">
-            © {currentYear} VirtualU. All rights reserved.
+            © {currentYear} VirtualU — Virtual University of Pakistan Study Hub. All rights reserved.
           </p>
           <div className="flex items-center gap-1.5">
             {socials.map(({ Icon, label }) => (

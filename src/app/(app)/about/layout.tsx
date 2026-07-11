@@ -3,16 +3,48 @@ import type { Metadata } from "next";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.BLOG_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
-  title: "About — VirtualU for Virtual University of Pakistan",
+  title: "About VirtualU — Pakistan's #1 Virtual University Study Hub",
   description:
-    "Learn about VirtualU — a modern learning companion for Virtual University of Pakistan students, offering study resources, AI-guided articles, and exam preparation.",
+    "Learn about VirtualU — your complete study companion for Virtual University of Pakistan. Access BSCS subjects list, opencourseware resources, VU LMS guides, uni admission info, BS Computer Science, BS Software Engineering, MBA, BBA and MS programs with fee structures.",
+  keywords: [
+    "about virtual university of pakistan",
+    "virtualupk",
+    "vu pak",
+    "pakistan virtual university",
+    "virtual university lahore",
+    "virtual university bs programs",
+    "virtual university masters programs",
+    "virtual university bachelor programs",
+    "virtual university distance learning programs",
+    "opencourseware",
+    "opencourseware universities",
+    "vu learning management system",
+    "university lms",
+    "uni admission",
+    "admission virtual university",
+    "vu online admission",
+    "bscs subjects",
+    "bs computer sciences",
+    "bs software engineering",
+    "bs accounting and finance",
+    "vu mba",
+    "bba virtual university",
+    "ms computer science subjects",
+    "ms in mass communication",
+  ],
   alternates: { canonical: `${BASE_URL}/about` },
   openGraph: {
-    title: "About VirtualU | Virtual University of Pakistan",
+    title: "About VirtualU | Virtual University of Pakistan Study Hub",
     description:
-      "A modern learning companion for Virtual University of Pakistan students.",
+      "VirtualU is a modern learning companion for Virtual University of Pakistan students. Explore BSCS subjects, opencourseware, VU LMS, uni admission, MBA, BBA, BS programs and fee structures.",
     url: `${BASE_URL}/about`,
     type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "About VirtualU" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About VirtualU | Virtual University of Pakistan",
+    description: "Your complete study companion for VU Pakistan — BSCS subjects, opencourseware, uni admission, MBA, BBA, MS programs.",
   },
 };
 
