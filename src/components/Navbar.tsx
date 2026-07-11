@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Search, Menu, X, GraduationCap, Upload, LogOut,
-  Library, Sparkles, ChevronDown, Bell, BookOpen,
+  Library, Sparkles, ChevronDown, BookOpen,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
@@ -34,19 +34,13 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [scrollProgress, setScrollProgress] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, loading } = useAuth();
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const handler = () => {
-      const y = window.scrollY;
-      setScrolled(y > 40);
-      const docH = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(docH > 0 ? (y / docH) * 100 : 0);
-    };
+    const handler = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handler, { passive: true });
     handler();
     return () => window.removeEventListener("scroll", handler);
@@ -90,12 +84,6 @@ export function Navbar() {
 
   return (
     <>
-      {/* Scroll progress bar */}
-      <motion.div
-        className="fixed top-0 left-0 h-[2px] z-[60] bg-gradient-to-r from-[#4eafc4] via-[#7dd4e8] to-[#4eafc4]"
-        style={{ width: `${scrollProgress}%` }}
-      />
-
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -107,7 +95,7 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-18">
+          <div className="flex items-center justify-between h-16 lg:h-[72px]">
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">

@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   GraduationCap,
   Mail,
-  Phone,
   MapPin,
   Facebook,
   Youtube,
@@ -196,7 +195,6 @@ export function Footer() {
             <div className="flex flex-col gap-2.5">
               {[
                 { icon: Mail, text: "support@virtualu.edu.pk" },
-                { icon: Phone, text: "+92 51 111 880 880" },
                 { icon: MapPin, text: "Islamabad, Pakistan" },
               ].map(({ icon: Icon, text }) => (
                 <div
