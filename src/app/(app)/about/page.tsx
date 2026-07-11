@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { GraduationCap, BookOpen, Users, Award, Globe, Heart, Target, Lightbulb, Mail, Phone, MapPin, Upload, Sparkles } from "lucide-react";
+import { GraduationCap, BookOpen, Users, Award, Globe, Heart, Target, Lightbulb, Mail, MapPin, Upload, Sparkles } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -218,10 +218,9 @@ export default function AboutPage() {
               Get in Touch
             </h2>
             <p className="text-white/60 mb-10 sm:mb-12 text-sm sm:text-base px-2">Have questions? We&apos;re here to help you succeed.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-xl mx-auto">
               {[
                 { icon: Mail, label: "Email", val: "support@virtualu.edu.pk" },
-                { icon: Phone, label: "Phone", val: "+92 51 111 880 880" },
                 { icon: MapPin, label: "Location", val: "Islamabad, Pakistan" },
               ].map(({ icon: Icon, label, val }) => (
                 <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-5 sm:p-6">
