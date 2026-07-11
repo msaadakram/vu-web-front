@@ -12,6 +12,10 @@ export const revalidate = 3600;
 type ListPost = { slug: string; title: string; category?: string; updatedAt?: string; createdAt?: string };
 type ResourceItem = { _id: string; title: string; type?: string; updatedAt?: string; createdAt?: string };
 
+// Typed API response shapes
+type BlogApiResponse     = { data?: { blogs?: ListPost[] } };
+type ResourceApiResponse = { data?: { resources?: ResourceItem[] } };
+
 function formatDate(iso?: string) {
   if (!iso) return "";
   try { return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }); }
@@ -25,8 +29,8 @@ function toYMD(iso?: string) {
 }
 
 export default async function SitemapPage() {
-  let blogPosts: ListPost[] = [];
-  let newsPosts: ListPost[] = [];
+  let blogPosts: ListPost[]    = [];
+  let newsPosts: ListPost[]    = [];
   let resources: ResourceItem[] = [];
 
   try {
@@ -35,17 +39,20 @@ export default async function SitemapPage() {
       fetch(`${BACKEND_URL}/api/news?limit=500`,      { next: { revalidate: 3600 } }),
       fetch(`${BACKEND_URL}/api/resources?limit=500`, { next: { revalidate: 3600 } }),
     ]);
-    const [blogData, newsData, resourceData] = await Promise.all([
-      blogRes.ok      ? blogRes.json()      : {},
-      newsRes.ok      ? newsRes.json()      : {},
-      resourceRes.ok  ? resourceRes.json()  : {},
-    ]);
+
+    const [blogData, newsData, resourceData]: [BlogApiResponse, BlogApiResponse, ResourceApiResponse] =
+      await Promise.all([
+        blogRes.ok     ? (blogRes.json()     as Promise<BlogApiResponse>)     : Promise.resolve({}),
+        newsRes.ok     ? (newsRes.json()     as Promise<BlogApiResponse>)     : Promise.resolve({}),
+        resourceRes.ok ? (resourceRes.json() as Promise<ResourceApiResponse>) : Promise.resolve({}),
+      ]);
+
     blogPosts  = blogData?.data?.blogs      ?? [];
     newsPosts  = newsData?.data?.blogs      ?? [];
     resources  = resourceData?.data?.resources ?? [];
   } catch { /* fallback to static only */ }
 
-  // ── Build XML string ─────────────────────────────────────────────
+  // ── Build XML string ──────────────────────────────────────────────────────
   const now = new Date().toISOString().slice(0, 10);
 
   const staticEntries = [
@@ -107,7 +114,7 @@ export default async function SitemapPage() {
     `</urlset>`,
   ].join("\n");
 
-  // ── Human-readable groups ──────────────────────────────────────────────
+  // ── Human-readable groups ─────────────────────────────────────────────────
   const staticPages: SitemapGroup["entries"] = [
     { title: "Home", href: "/" },
     { title: "What's New", href: "/whats-new", meta: "Latest updates" },
@@ -232,10 +239,10 @@ export default async function SitemapPage() {
         {/* Quick category cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10">
           {[
-            { icon: LayoutGrid,   label: "Pages",    count: staticPages.length,        href: "#pages" },
-            { icon: FileText,     label: "Articles", count: articleGroupEntries.length, href: "#articles" },
-            { icon: Newspaper,    label: "News",     count: newsGroupEntries.length,    href: "#news" },
-            { icon: GraduationCap,label: "Programs", count: programGroupEntries.length, href: "#programs" },
+            { icon: LayoutGrid,    label: "Pages",    count: staticPages.length,        href: "#pages" },
+            { icon: FileText,      label: "Articles", count: articleGroupEntries.length, href: "#articles" },
+            { icon: Newspaper,     label: "News",     count: newsGroupEntries.length,    href: "#news" },
+            { icon: GraduationCap, label: "Programs", count: programGroupEntries.length, href: "#programs" },
           ].map((card) => (
             <a
               key={card.label}
