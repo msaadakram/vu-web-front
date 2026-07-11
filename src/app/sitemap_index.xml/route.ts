@@ -1,13 +1,15 @@
 /**
  * /sitemap_index.xml  —  Google-compliant Sitemap Index
  *
- * Serves a <sitemapindex> that points Google to all sub-sitemaps:
- *   /sitemap.xml          – main (static + programs)
- *   /sitemap/blog.xml     – blog posts  (dynamic)
- *   /sitemap/news.xml     – news posts  (dynamic)
+ * Points Google to ALL sub-sitemaps:
+ *   /sitemap.xml           – main (Next.js built-in: static pages)
+ *   /sitemap/blog.xml      – blog posts
+ *   /sitemap/news.xml      – news posts
+ *   /sitemap/programs.xml  – programs
+ *   /sitemap/resources.xml – resources
+ *   /sitemap/whats-new.xml – what's new page
  *
- * Google fetches this URL when you submit it in Search Console.
- * ISR: refreshes once per hour; on-demand via /api/revalidate.
+ * Submit /sitemap_index.xml in Google Search Console.
  */
 
 import { NextResponse } from "next/server";
@@ -19,11 +21,8 @@ const BASE_URL =
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
-// Re-validate every hour (ISR)
 export const revalidate = 3600;
-
-// Allow Google to cache this response for 1 hour
-export const dynamic = "force-dynamic"; // ensures env vars are read at runtime
+export const dynamic = "force-dynamic";
 
 function xmlEscape(str: string) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -36,40 +35,46 @@ function sitemapEntry(loc: string, lastmod: Date) {
 export async function GET() {
   const now = new Date();
 
-  // ── Determine dynamic sitemap lastmod dates ───────────────────────────────
   let blogLastmod = now;
   let newsLastmod = now;
+  let resourceLastmod = now;
 
   try {
-    const [blogRes, newsRes] = await Promise.all([
+    const [blogRes, newsRes, resourceRes] = await Promise.all([
       fetch(`${BACKEND_URL}/api/blog?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
       fetch(`${BACKEND_URL}/api/news?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
+      fetch(`${BACKEND_URL}/api/resources?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
     ]);
 
     if (blogRes.ok) {
       const d = await blogRes.json();
       const latest = d?.data?.blogs?.[0];
-      if (latest?.updatedAt ?? latest?.createdAt) {
+      if (latest?.updatedAt || latest?.createdAt)
         blogLastmod = new Date(latest.updatedAt ?? latest.createdAt);
-      }
     }
     if (newsRes.ok) {
       const d = await newsRes.json();
       const latest = d?.data?.blogs?.[0];
-      if (latest?.updatedAt ?? latest?.createdAt) {
+      if (latest?.updatedAt || latest?.createdAt)
         newsLastmod = new Date(latest.updatedAt ?? latest.createdAt);
-      }
+    }
+    if (resourceRes.ok) {
+      const d = await resourceRes.json();
+      const latest = d?.data?.resources?.[0];
+      if (latest?.updatedAt || latest?.createdAt)
+        resourceLastmod = new Date(latest.updatedAt ?? latest.createdAt);
     }
   } catch (err) {
     console.warn("[SitemapIndex] Could not fetch lastmod dates:", (err as Error).message);
   }
 
-  // ── Build XML ─────────────────────────────────────────────────────────────
   const entries = [
-    sitemapEntry(`${BASE_URL}/sitemap.xml`,        now),           // main sitemap (Next.js built-in)
-    sitemapEntry(`${BASE_URL}/sitemap/blog.xml`,   blogLastmod),   // blog sub-sitemap
-    sitemapEntry(`${BASE_URL}/sitemap/news.xml`,   newsLastmod),   // news sub-sitemap
-    sitemapEntry(`${BASE_URL}/sitemap/programs.xml`, now),         // programs sub-sitemap
+    sitemapEntry(`${BASE_URL}/sitemap.xml`,           now),
+    sitemapEntry(`${BASE_URL}/sitemap/blog.xml`,      blogLastmod),
+    sitemapEntry(`${BASE_URL}/sitemap/news.xml`,      newsLastmod),
+    sitemapEntry(`${BASE_URL}/sitemap/programs.xml`,  now),
+    sitemapEntry(`${BASE_URL}/sitemap/resources.xml`, resourceLastmod),
+    sitemapEntry(`${BASE_URL}/sitemap/whats-new.xml`, now),
   ].join("\n");
 
   const xml = [
@@ -85,7 +90,7 @@ export async function GET() {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
       "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
-      "X-Robots-Tag": "noindex", // index file itself shouldn't be indexed
+      "X-Robots-Tag": "noindex",
     },
   });
 }
