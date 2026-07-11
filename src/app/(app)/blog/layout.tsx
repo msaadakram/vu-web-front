@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { type Metadata } from "next";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -7,47 +7,32 @@ const BASE_URL =
 
 export const metadata: Metadata = {
   title: {
-    default: "Blog — Study Articles & Guides | VirtualU",
+    default: "Blog — BSCS Subjects, VU Programs & Admission Guides | VirtualU",
     template: "%s | VirtualU Blog",
   },
   description:
-    "Browse AI-guided study articles, course summaries, past-paper breakdowns, and exam tips for Virtual University of Pakistan (VU) students. Covering CS, Mathematics, Business, Physics, Chemistry, Economics, English and more.",
+    "Read expert VU study guides covering BSCS subjects list semester-wise, BS Computer Sciences courses, VU MBA programs, VU online admission steps, and LMS tutorials. AI-generated, SEO-optimized content for Virtual University of Pakistan students.",
   keywords: [
-    "VU blog",
-    "Virtual University articles",
-    "VU study guides",
-    "VU exam tips",
-    "VU course help",
-    "Virtual University of Pakistan",
-    "VU handouts",
-    "VU past papers",
-    "VU CS",
-    "VU MBA",
+    "bscs subjects list",
+    "bs computer sciences",
+    "vu online admission",
+    "virtual university programs",
+    "bscs semester wise subjects",
+    "bs software engineering subjects",
+    "mba virtual university",
+    "vu learning management system",
+    "opencourseware",
+    "virtual university blog",
+    "vu study resources",
+    "admission virtual university",
   ],
-  authors: [{ name: "VirtualU", url: BASE_URL }],
-  creator: "VirtualU",
-  publisher: "Virtual University of Pakistan",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
-  },
   alternates: { canonical: `${BASE_URL}/blog` },
   openGraph: {
-    title: "Blog — Study Articles & Guides for VU Students | VirtualU",
-    description:
-      "AI-guided study articles and course guides for Virtual University of Pakistan students.",
+    title: "VirtualU Blog — BSCS Subjects, VU Admission & Study Guides",
+    description: "Expert guides on BSCS subjects list, BS Computer Sciences semester-wise courses, VU MBA, BBA admission, and LMS tutorials for Virtual University of Pakistan students.",
+    type: "website",
     url: `${BASE_URL}/blog`,
     siteName: "VirtualU",
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "VirtualU Blog — Study Articles for VU Students",
-    description:
-      "AI-guided study articles and course guides for Virtual University of Pakistan students.",
-    creator: "@virtualupk",
   },
 };
 

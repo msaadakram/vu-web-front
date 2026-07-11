@@ -1,32 +1,41 @@
-import type { Metadata } from "next";
+import { type Metadata } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.BLOG_PUBLIC_BASE_URL || "http://localhost:3000";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  process.env.BLOG_PUBLIC_BASE_URL ||
+  "https://virtualupk.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Study Resources — Past Papers, Handouts & Notes",
+  title: {
+    default: "VU Study Resources — Handouts, Past Papers & Course Notes | VirtualU",
+    template: "%s | VirtualU Resources",
+  },
   description:
-    "Download free study resources for Virtual University of Pakistan: past papers, handouts, assignments, and notes across all courses and semesters.",
+    "Download VU study resources including BSCS handouts, past papers, CS101 lectures, CS301 data structures notes, and study schemes for all Virtual University of Pakistan programs. Free opencourseware resources.",
   keywords: [
-    "VU past papers",
-    "VU handouts",
-    "VU assignments",
-    "VU notes",
-    "Virtual University resources",
-    "VU study material",
+    "bscs subjects",
+    "vu handouts",
+    "vu past papers",
+    "cs101 lectures",
+    "cs101 book",
+    "cs101 introduction to computing",
+    "bs computer science books",
+    "bscs courses",
+    "virtual university free online courses",
+    "vu free courses",
+    "opencourseware",
+    "vu learning management system",
+    "bs software engineering subjects",
+    "bs accounting and finance subjects",
+    "virtual university study resources",
   ],
   alternates: { canonical: `${BASE_URL}/resources` },
   openGraph: {
-    title: "Study Resources — Past Papers, Handouts & Notes | VirtualU",
-    description:
-      "Download free past papers, handouts, assignments, and notes for Virtual University of Pakistan.",
-    url: `${BASE_URL}/resources`,
+    title: "VU Resources — Handouts, Past Papers & Free Study Material",
+    description: "Free VU study resources: BSCS handouts, past papers, CS101 lectures, and subject notes for all Virtual University of Pakistan courses.",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "VirtualU Resources — Past Papers & Handouts",
-    description:
-      "Download free study resources for Virtual University of Pakistan.",
+    url: `${BASE_URL}/resources`,
+    siteName: "VirtualU",
   },
 };
 
