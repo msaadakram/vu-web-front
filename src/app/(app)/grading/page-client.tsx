@@ -240,12 +240,12 @@ export default function GradingPageClient() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* ── Hero ── */}
-      <section className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-20 relative overflow-hidden">
+      <section className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-16 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 right-10 w-72 h-72 bg-[#4eafc4]/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-10 w-60 h-60 bg-[#2a4a73]/20 rounded-full blur-2xl" />
         </div>
-        <div className="relative max-w-5xl mx-auto px-6 text-center">
+        <div className="relative max-w-5xl mx-auto px-5 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -259,23 +259,23 @@ export default function GradingPageClient() {
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "clamp(2rem, 4vw, 3rem)",
+                fontSize: "clamp(1.9rem, 6vw, 3rem)",
                 lineHeight: 1.2,
               }}
             >
               VU Grading Scheme
             </h1>
-            <p className="text-white/60 max-w-xl mx-auto mb-10 text-base leading-relaxed">
+            <p className="text-white/60 max-w-xl mx-auto mb-8 sm:mb-10 text-sm sm:text-base leading-relaxed px-2">
               Understand how Virtual University of Pakistan evaluates student
               performance — from grade points and GPA to CGPA calculation.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               {["A+ to F Scale", "GPA Formula", "CGPA Tips", "FAQs"].map(
                 (label, i) => (
                   <span
                     key={label}
-                    className="px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/15 text-white/80 rounded-full text-xs font-medium"
+                    className="px-3 sm:px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/15 text-white/80 rounded-full text-xs font-medium"
                   >
                     {label}
                   </span>
@@ -292,8 +292,8 @@ export default function GradingPageClient() {
       </section>
 
       {/* ── Grading Scale Table ── */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-6">
+      <section className="py-14 sm:py-20">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <SectionHeading
             tag="Grading Scale"
             title="Official VU Grade Points"
@@ -306,6 +306,7 @@ export default function GradingPageClient() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-white rounded-2xl border border-[#1c3557]/10 shadow-sm overflow-hidden"
           >
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-[#e8f4f7]">
@@ -362,6 +363,7 @@ export default function GradingPageClient() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </motion.div>
 
           <motion.p
@@ -369,7 +371,7 @@ export default function GradingPageClient() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="text-center text-[#64788f] text-sm mt-6"
+            className="text-center text-[#64788f] text-sm mt-6 px-2"
           >
             <span className="font-semibold text-[#0f1e35]">Note:</span> A grade
             of &quot;D&quot; (1.00 GP) is the minimum passing grade. &quot;F&quot; (0.00 GP) is a
@@ -379,8 +381,8 @@ export default function GradingPageClient() {
       </section>
 
       {/* ── GPA / CGPA Calculation ── */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-6">
+      <section className="py-14 sm:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6">
           <SectionHeading
             tag="Calculation"
             title="How GPA & CGPA Are Calculated"
@@ -394,15 +396,15 @@ export default function GradingPageClient() {
       </section>
 
       {/* ── Tips ── */}
-      <section className="py-20">
-        <div className="max-w-5xl mx-auto px-6">
+      <section className="py-14 sm:py-20">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6">
           <SectionHeading
             tag="Tips"
             title="Tips to Improve Your CGPA"
             subtitle="Practical strategies to help you maintain a strong academic record at Virtual University."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {tips.map((tip, i) => {
               const Icon = tip.icon;
               const ref = useRef(null);
@@ -415,7 +417,7 @@ export default function GradingPageClient() {
                   initial="hidden"
                   animate={inView ? "visible" : "hidden"}
                   custom={i}
-                  className="bg-white rounded-2xl p-6 border border-[#1c3557]/8 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  className="bg-white rounded-2xl p-5 sm:p-6 border border-[#1c3557]/8 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                 >
                   <div className="w-11 h-11 rounded-xl bg-[#e8f4f7] flex items-center justify-center mb-4">
                     <Icon className="w-5.5 h-5.5 text-[#4eafc4]" />
@@ -434,8 +436,8 @@ export default function GradingPageClient() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-20 bg-white">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="py-14 sm:py-20 bg-white">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6">
           <SectionHeading
             tag="FAQ"
             title="Frequently Asked Questions"
@@ -459,7 +461,7 @@ export default function GradingPageClient() {
                   value={`faq-${i}`}
                   className="border border-[#1c3557]/10 rounded-xl overflow-hidden bg-white shadow-sm data-[state=open]:shadow-md transition-shadow"
                 >
-                  <AccordionTrigger className="px-6 py-4 text-[#0f1e35] font-medium text-sm hover:text-[#4eafc4] hover:no-underline [&[data-state=open]>svg]:text-[#4eafc4]">
+                  <AccordionTrigger className="px-5 sm:px-6 py-4 text-[#0f1e35] font-medium text-sm hover:text-[#4eafc4] hover:no-underline [&[data-state=open]>svg]:text-[#4eafc4] text-left">
                     <div className="flex items-center gap-3 text-left">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#e8f4f7] flex items-center justify-center">
                         <HelpCircle className="w-3.5 h-3.5 text-[#4eafc4]" />
@@ -467,7 +469,7 @@ export default function GradingPageClient() {
                       {faq.q}
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="px-6 pb-4 text-[#64788f] text-sm leading-relaxed">
+                  <AccordionContent className="px-5 sm:px-6 pb-4 text-[#64788f] text-sm leading-relaxed">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -478,11 +480,11 @@ export default function GradingPageClient() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-20 bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] relative overflow-hidden">
+      <section className="py-14 sm:py-20 bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#4eafc4]/10 rounded-full blur-[80px]" />
         </div>
-        <div className="relative max-w-3xl mx-auto px-6 text-center">
+        <div className="relative max-w-3xl mx-auto px-5 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -495,13 +497,13 @@ export default function GradingPageClient() {
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
                 lineHeight: 1.2,
               }}
             >
               Ready to Calculate Your GPA?
             </h2>
-            <p className="text-white/60 max-w-lg mx-auto mb-8 leading-relaxed">
+            <p className="text-white/60 max-w-lg mx-auto mb-8 leading-relaxed text-sm sm:text-base px-2">
               Use VirtualU&apos;s interactive GPA calculator to plan your semester
               grades and track your academic progress.
             </p>

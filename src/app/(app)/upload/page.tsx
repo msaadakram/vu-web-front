@@ -221,7 +221,7 @@ export default function UploadPage() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 right-10 w-72 h-72 bg-[#4eafc4]/10 rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-3xl mx-auto px-6 text-center">
+        <div className="relative max-w-3xl mx-auto px-5 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -257,13 +257,13 @@ export default function UploadPage() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 lg:px-8 py-10">
+      <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8 py-10">
         <motion.form
           onSubmit={onSubmit}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-3xl border border-[#1c3557]/8 p-8 shadow-sm space-y-6"
+          className="bg-white rounded-3xl border border-[#1c3557]/8 p-5 sm:p-8 shadow-sm space-y-6"
         >
           {/* File drop zone */}
           <div>
@@ -344,7 +344,7 @@ export default function UploadPage() {
           </div>
 
           {/* Type + Course + Semester */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-[#0f1e35] mb-2">
                 Type
@@ -415,11 +415,11 @@ export default function UploadPage() {
             <Switch checked={genBlog} onCheckedChange={setGenBlog} />
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               type="submit"
               disabled={submitting}
-              className="h-11 px-6 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] text-white font-semibold shadow-lg shadow-[#4eafc4]/25 hover:shadow-[#4eafc4]/40 transition-shadow"
+              className="h-11 px-6 bg-gradient-to-r from-[#4eafc4] to-[#3a95aa] text-white font-semibold shadow-lg shadow-[#4eafc4]/25 hover:shadow-[#4eafc4]/40 transition-shadow w-full sm:w-auto"
             >
               {submitting ? (
                 <span className="flex items-center gap-2">
@@ -436,7 +436,7 @@ export default function UploadPage() {
               type="button"
               variant="outline"
               onClick={() => router.push("/resources")}
-              className="h-11 px-6"
+              className="h-11 px-6 w-full sm:w-auto"
             >
               Cancel
             </Button>

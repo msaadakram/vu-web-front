@@ -76,12 +76,12 @@ export default function FeeStructurePage() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Hero */}
-      <div className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-24 relative overflow-hidden">
+      <div className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-16 sm:py-24 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#4eafc4]/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#2a4a73]/20 rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-4xl mx-auto px-6 text-center">
+        <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -95,13 +95,13 @@ export default function FeeStructurePage() {
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "clamp(2rem, 4vw, 3rem)",
+                fontSize: "clamp(1.9rem, 6vw, 3rem)",
                 lineHeight: 1.2,
               }}
             >
               Fee Structure
             </h1>
-            <p className="text-white/60 max-w-2xl mx-auto">
+            <p className="text-white/60 max-w-2xl mx-auto text-sm sm:text-base px-2">
               Comprehensive fee details for all degree programs at Virtual
               University of Pakistan. Find the right fee structure based on your
               student category.
@@ -119,8 +119,8 @@ export default function FeeStructurePage() {
       </div>
 
       {/* Category Cards */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 -mt-10 relative z-10 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 -mt-10 relative z-10 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {categories.map((cat, i) => {
             const Icon = cat.icon;
             return (
@@ -137,14 +137,14 @@ export default function FeeStructurePage() {
                     className={`h-1.5 bg-gradient-to-r ${cat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                   />
 
-                  <div className="p-7 flex flex-col flex-1">
-                    <div className="flex items-start justify-between mb-5">
+                  <div className="p-6 sm:p-7 flex flex-col flex-1">
+                    <div className="flex items-start justify-between mb-5 gap-2">
                       <div
-                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center shadow-lg`}
+                        className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center shadow-lg shrink-0`}
                       >
                         <Icon className="w-6 h-6 text-white" />
                       </div>
-                      <span className="px-2.5 py-1 bg-[#eef3f7] text-[#64788f] rounded-full text-[11px] font-semibold tracking-wide uppercase">
+                      <span className="px-2.5 py-1 bg-[#eef3f7] text-[#64788f] rounded-full text-[11px] font-semibold tracking-wide uppercase shrink-0">
                         {cat.badge}
                       </span>
                     </div>
@@ -154,7 +154,7 @@ export default function FeeStructurePage() {
                       style={{
                         fontFamily: "var(--font-playfair), serif",
                         fontWeight: 700,
-                        fontSize: "1.15rem",
+                        fontSize: "clamp(1.05rem, 2.5vw, 1.15rem)",
                       }}
                     >
                       {cat.title}
@@ -180,7 +180,7 @@ export default function FeeStructurePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 p-6 bg-amber-50 border border-amber-200 rounded-2xl text-center"
+          className="mt-10 sm:mt-12 p-5 sm:p-6 bg-amber-50 border border-amber-200 rounded-2xl text-center"
         >
           <p className="text-amber-800 text-sm font-medium">
             ⚠️ Disclaimer

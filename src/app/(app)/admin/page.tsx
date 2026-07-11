@@ -12,10 +12,13 @@ import {
   Sparkles,
   Upload,
   Download,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { api, ApiResource } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatFileSize, formatDate, RESOURCE_TYPE_META } from "@/lib/resources";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 type BlogEntry = {
   _id: string;
@@ -63,22 +66,32 @@ export default function AdminDashboard() {
   }, []);
 
   const handleDeleteBlog = async (id: string) => {
-    if (!confirm("Delete this post permanently?")) return;
     try {
       await api(`/blog/${id}/delete`, { method: "DELETE" });
       setBlogs((prev) => prev.filter((b) => b._id !== id));
+      toast.success("Post deleted");
     } catch {
-      alert("Failed to delete");
+      toast.error("Failed to delete post");
+    }
+  };
+
+  const handleRetry = async (id: string) => {
+    try {
+      await api(`/blog/${id}/retry`, { method: "POST" });
+      toast.success("Regeneration started");
+      fetchData();
+    } catch {
+      toast.error("Failed to retry");
     }
   };
 
   const handleDeleteResource = async (id: string) => {
-    if (!confirm("Delete this resource permanently?")) return;
     try {
       await api(`/resources/${id}`, { method: "DELETE" });
       setResources((prev) => prev.filter((r) => r._id !== id));
+      toast.success("Resource deleted");
     } catch {
-      alert("Failed to delete");
+      toast.error("Failed to delete resource");
     }
   };
 
@@ -118,7 +131,7 @@ export default function AdminDashboard() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#4eafc4]/10 rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <motion.span
@@ -151,7 +164,7 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
-              className="flex gap-3"
+              className="flex flex-wrap gap-3"
             >
               <Link
                 href="/upload"
@@ -200,7 +213,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content List */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 -mt-6 relative z-10 pb-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 -mt-6 relative z-10 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -226,10 +239,10 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/50 transition-colors"
+                    className="flex items-start gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-gray-50/50 transition-colors"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span
                           className={`text-[10px] font-semibold uppercase tracking-wider ${
                             blog.type === "news"
@@ -253,7 +266,7 @@ export default function AdminDashboard() {
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                       {blog.status === "published" && (
                         <Link
                           href={
@@ -268,25 +281,27 @@ export default function AdminDashboard() {
                       )}
                       {blog.status === "failed" && (
                         <button
-                          onClick={async () => {
-                            try {
-                              await api(`/blog/${blog._id}/retry`, { method: "POST" });
-                              fetchData();
-                            } catch {
-                              alert("Failed to retry");
-                            }
-                          }}
+                          onClick={() => handleRetry(blog._id)}
                           className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-amber-500 transition-colors"
+                          title="Retry generation"
                         >
                           <RefreshCw className="w-4 h-4" />
                         </button>
                       )}
-                      <button
-                        onClick={() => handleDeleteBlog(blog._id)}
-                        className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <ConfirmDialog
+                        trigger={
+                          <button
+                            className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-red-500 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        }
+                        title="Delete this post?"
+                        description="This will permanently delete the post and its cover image. This action cannot be undone."
+                        confirmText="Delete"
+                        onConfirm={() => handleDeleteBlog(blog._id)}
+                      />
                     </div>
                   </motion.div>
                 ))}
@@ -316,13 +331,13 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/50 transition-colors"
+                    className="flex items-start gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-gray-50/50 transition-colors"
                   >
                     <div className="w-9 h-9 rounded-lg bg-[#e8f4f7] flex items-center justify-center text-base shrink-0">
                       {meta.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
+                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                         <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${meta.badge}`}>
                           {meta.label}
                         </span>
@@ -339,7 +354,7 @@ export default function AdminDashboard() {
                         {r.title}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                       <a
                         href={`/api/resources/${r._id}/download`}
                         className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-[#4eafc4] transition-colors"
@@ -347,12 +362,20 @@ export default function AdminDashboard() {
                       >
                         <Download className="w-4 h-4" />
                       </a>
-                      <button
-                        onClick={() => handleDeleteResource(r._id)}
-                        className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <ConfirmDialog
+                        trigger={
+                          <button
+                            className="p-2 rounded-lg hover:bg-gray-100 text-[#64788b] hover:text-red-500 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        }
+                        title="Delete this resource?"
+                        description="This will permanently delete the resource file from storage. This action cannot be undone."
+                        confirmText="Delete"
+                        onConfirm={() => handleDeleteResource(r._id)}
+                      />
                     </div>
                   </motion.div>
                 );

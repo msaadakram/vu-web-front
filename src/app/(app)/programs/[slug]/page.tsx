@@ -131,7 +131,7 @@ export default async function ProgramDetailPage({ params }: Props) {
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#4eafc4]/10 rounded-full blur-3xl" />
           </div>
-          <div className="relative max-w-4xl mx-auto px-6 lg:px-8">
+          <div className="relative max-w-4xl mx-auto px-5 sm:px-6 lg:px-8">
             <Link
               href="/programs"
               className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-[#4eafc4] transition-colors mb-6"
@@ -148,16 +148,16 @@ export default async function ProgramDetailPage({ params }: Props) {
                 style={{
                   fontFamily: "var(--font-playfair), serif",
                   fontWeight: 700,
-                  fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
+                  fontSize: "clamp(1.6rem, 5vw, 2.75rem)",
                   lineHeight: 1.2,
                 }}
               >
                 {prog.title}
               </h1>
-              <p className="text-white/60 max-w-2xl mx-auto text-base leading-relaxed">
+              <p className="text-white/60 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed px-2">
                 {prog.description}
               </p>
-              <div className="flex items-center justify-center gap-4 mt-6 text-white/50 text-sm flex-wrap">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 text-white/50 text-xs sm:text-sm flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <GraduationCap className="w-4 h-4" />
                   {prog.degree}
@@ -176,32 +176,32 @@ export default async function ProgramDetailPage({ params }: Props) {
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-12">
           {/* Overview */}
-          <section className="mb-12">
+          <section className="mb-10 sm:mb-12">
             <h2
               className="text-[#0f1e35] mb-4"
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "1.5rem",
+                fontSize: "clamp(1.3rem, 3.5vw, 1.5rem)",
               }}
             >
               Overview
             </h2>
-            <p className="text-[#2d3b4f] leading-relaxed text-base">
+            <p className="text-[#2d3b4f] leading-relaxed text-sm sm:text-base">
               {prog.longDescription}
             </p>
           </section>
 
           {/* Highlights */}
-          <section className="mb-12">
+          <section className="mb-10 sm:mb-12">
             <h2
               className="text-[#0f1e35] mb-5"
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "1.5rem",
+                fontSize: "clamp(1.3rem, 3.5vw, 1.5rem)",
               }}
             >
               Program Highlights
@@ -222,13 +222,13 @@ export default async function ProgramDetailPage({ params }: Props) {
           </section>
 
           {/* Career Opportunities */}
-          <section className="mb-12">
+          <section className="mb-10 sm:mb-12">
             <h2
               className="text-[#0f1e35] mb-5"
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "1.5rem",
+                fontSize: "clamp(1.3rem, 3.5vw, 1.5rem)",
               }}
             >
               Career Opportunities
@@ -237,7 +237,7 @@ export default async function ProgramDetailPage({ params }: Props) {
               {prog.careerOpportunities.map((c, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-[#0f172a]"
+                  className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-medium text-[#0f172a]"
                 >
                   <Briefcase className="w-3.5 h-3.5 text-[#4eafc4]" />
                   {c}
@@ -248,9 +248,9 @@ export default async function ProgramDetailPage({ params }: Props) {
 
           {/* FAQ */}
           {prog.faq.length > 0 && (
-            <section className="mb-12 bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-[#e8f4f7] flex items-center justify-center">
+            <section className="mb-10 sm:mb-12 bg-white rounded-3xl border border-gray-100 p-5 sm:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                <div className="w-10 h-10 rounded-xl bg-[#e8f4f7] flex items-center justify-center shrink-0">
                   <BookOpen className="w-5 h-5 text-[#4eafc4]" />
                 </div>
                 <div>
@@ -259,7 +259,7 @@ export default async function ProgramDetailPage({ params }: Props) {
                     style={{
                       fontFamily: "var(--font-playfair), serif",
                       fontWeight: 700,
-                      fontSize: "1.35rem",
+                      fontSize: "clamp(1.15rem, 3vw, 1.35rem)",
                     }}
                   >
                     Frequently Asked Questions
@@ -295,7 +295,7 @@ export default async function ProgramDetailPage({ params }: Props) {
                 style={{
                   fontFamily: "var(--font-playfair), serif",
                   fontWeight: 700,
-                  fontSize: "1.3rem",
+                  fontSize: "clamp(1.2rem, 3vw, 1.3rem)",
                 }}
               >
                 Related Programs
@@ -322,7 +322,7 @@ export default async function ProgramDetailPage({ params }: Props) {
           )}
 
           {/* AI Disclosure */}
-          <div className="mt-12 flex items-center gap-2 text-xs text-[#64788f] bg-[#eef3f7] rounded-xl px-5 py-4">
+          <div className="mt-10 sm:mt-12 flex items-start sm:items-center gap-2 text-xs text-[#64788f] bg-[#eef3f7] rounded-xl px-4 sm:px-5 py-4">
             <Sparkles className="w-4 h-4 text-[#4eafc4] shrink-0" />
             <span>
               This program information is provided by{" "}

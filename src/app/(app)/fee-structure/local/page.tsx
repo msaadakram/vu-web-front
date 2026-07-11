@@ -209,12 +209,12 @@ export default function LocalFeePage() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Hero */}
-      <div className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-20 relative overflow-hidden">
+      <div className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-16 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#4eafc4]/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#2a4a73]/20 rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-4xl mx-auto px-6 text-center">
+        <div className="relative max-w-4xl mx-auto px-5 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -228,13 +228,13 @@ export default function LocalFeePage() {
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "clamp(2rem, 4vw, 3rem)",
+                fontSize: "clamp(1.75rem, 5vw, 3rem)",
                 lineHeight: 1.2,
               }}
             >
               Fee Structure — Local Students
             </h1>
-            <p className="text-white/60 max-w-lg mx-auto">
+            <p className="text-white/60 max-w-lg mx-auto text-sm sm:text-base px-2">
               All fees are in Pakistani Rupee (PKR). Tuition fee is per credit
               hour unless marked otherwise.
             </p>
@@ -251,7 +251,7 @@ export default function LocalFeePage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <Link
             href="/fee-structure"
@@ -377,7 +377,7 @@ export default function LocalFeePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-10 bg-white rounded-2xl border border-[#1c3557]/8 p-7 shadow-sm"
+          className="mt-10 bg-white rounded-2xl border border-[#1c3557]/8 p-5 sm:p-7 shadow-sm"
         >
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center">

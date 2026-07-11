@@ -88,13 +88,13 @@ export default function ProgramsPage() {
 
       <div className="min-h-screen bg-[#f8fafc]">
         {/* Hero Section */}
-        <section className="relative pt-20 lg:pt-[72px] pb-20 overflow-hidden">
+        <section className="relative pt-20 lg:pt-[72px] pb-16 sm:pb-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]" />
           <div className="absolute inset-0 bg-grid-white opacity-[0.03]" />
           <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-[#4eafc4]/10 rounded-full blur-[120px]" />
           <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-[#2dd4bf]/5 rounded-full blur-[100px]" />
 
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 border border-white/20 text-white/80 rounded-full text-xs font-semibold tracking-wider uppercase mb-6 backdrop-blur-sm">
                 <Sparkles className="w-3.5 h-3.5 text-[#4eafc4]" />
@@ -106,7 +106,7 @@ export default function ProgramsPage() {
                 style={{
                   fontFamily: "var(--font-playfair), serif",
                   fontWeight: 700,
-                  fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                  fontSize: "clamp(1.75rem, 6vw, 3.5rem)",
                   lineHeight: 1.15,
                   letterSpacing: "-0.02em",
                 }}
@@ -118,7 +118,7 @@ export default function ProgramsPage() {
                 at Virtual University
               </h1>
 
-              <p className="text-white/50 text-base max-w-lg mx-auto leading-relaxed">
+              <p className="text-white/50 text-sm sm:text-base max-w-lg mx-auto leading-relaxed px-2">
                 Virtual University offers a variety of undergraduate, graduate,
                 diploma, short courses, specialization, and zero semester
                 programs to cater to diverse academic interests.
@@ -138,14 +138,14 @@ export default function ProgramsPage() {
         </section>
 
         {/* Content */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 -mt-8 relative z-10 pb-20">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 -mt-8 relative z-10 pb-16 sm:pb-20">
           {/* Category Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12 sm:mb-16">
             {categories.map((cat) => (
               <Link
                 key={cat.key}
                 href={`/programs#${cat.key.toLowerCase().replace(/\s+/g, "-")}`}
-                className="group bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/50 hover:-translate-y-0.5 transition-all duration-300"
+                className="group bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/50 hover:-translate-y-0.5 transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-xl bg-[#e8f4f7] flex items-center justify-center mb-4 group-hover:bg-[#4eafc4] group-hover:text-white transition-colors">
                   <GraduationCap className="w-5 h-5 text-[#4eafc4] group-hover:text-white transition-colors" />
@@ -176,15 +176,15 @@ export default function ProgramsPage() {
               <section
                 key={cat.key}
                 id={cat.key.toLowerCase().replace(/\s+/g, "-")}
-                className="mb-16 scroll-mt-24"
+                className="mb-12 sm:mb-16 scroll-mt-24"
               >
-                <div className="mb-8">
+                <div className="mb-6 sm:mb-8">
                   <h2
                     className="text-[#0f172a] mb-2"
                     style={{
                       fontFamily: "var(--font-playfair), serif",
                       fontWeight: 700,
-                      fontSize: "clamp(1.3rem, 3vw, 1.75rem)",
+                      fontSize: "clamp(1.25rem, 3.5vw, 1.75rem)",
                     }}
                   >
                     {cat.label}
@@ -192,12 +192,12 @@ export default function ProgramsPage() {
                   <p className="text-[#64788b] text-sm">{cat.description}</p>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                   {groups.map((group) => (
                     <div key={group.degree}>
                       <div className="flex items-center gap-2 mb-4">
                         <span className="text-lg">{DEGREE_ICONS[group.degree] || "📚"}</span>
-                        <h3 className="text-[#0f172a] font-semibold text-sm uppercase tracking-wider">
+                        <h3 className="text-[#0f172a] font-semibold text-xs sm:text-sm uppercase tracking-wider">
                           {group.degree}
                           {group.degree === "BS-Lateral"
                             ? " (2 Years)"

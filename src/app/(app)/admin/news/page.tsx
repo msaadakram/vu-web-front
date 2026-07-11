@@ -179,7 +179,7 @@ export default function AdminCreateNews() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#4eafc4]/10 rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-3xl mx-auto px-6">
+        <div className="relative max-w-3xl mx-auto px-5 sm:px-6">
           <Link
             href="/admin"
             className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-[#4eafc4] transition-colors mb-6"
@@ -212,25 +212,40 @@ export default function AdminCreateNews() {
       </div>
 
       {/* Form */}
-      <div className="max-w-3xl mx-auto px-6 lg:px-8 -mt-6 relative z-10 pb-16">
+      <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8 -mt-6 relative z-10 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8"
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6 lg:p-8"
         >
           {step === "generating" ? (
             <div className="text-center py-16">
-              <Loader2 className="w-10 h-10 text-[#4eafc4] animate-spin mx-auto mb-5" />
+              <motion.div
+                animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#e8f4f7] to-[#d1edf2] flex items-center justify-center mx-auto mb-5"
+              >
+                <Sparkles className="w-8 h-8 text-[#4eafc4]" />
+              </motion.div>
               <h3 className="text-[#0f172a] font-semibold text-lg mb-2">
                 Generating Article
               </h3>
               <p className="text-[#64788b] text-sm max-w-sm mx-auto">
-                Our AI is writing a comprehensive article based on your title.
+                Our AI is writing a comprehensive, SEO-optimized article based on your title.
                 This usually takes 30–60 seconds.
               </p>
               <div className="mt-6 w-48 h-1.5 bg-gray-100 rounded-full mx-auto overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#4eafc4] to-[#2dd4bf] rounded-full animate-pulse" />
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "100%" }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                  className="h-full w-1/2 bg-gradient-to-r from-[#4eafc4] to-[#2dd4bf] rounded-full"
+                />
+              </div>
+              <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-[#94a3b8]">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Structuring sections · writing FAQs · optimizing for search
               </div>
             </div>
           ) : step === "done" ? (

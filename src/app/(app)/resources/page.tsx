@@ -78,20 +78,20 @@ function ResourcesContent() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Hero */}
-      <div className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-20 relative overflow-hidden">
+      <div className="pt-20 lg:pt-[72px] bg-gradient-to-br from-[#0f1e35] via-[#1c3557] to-[#0e2a44] py-16 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 right-10 w-72 h-72 bg-[#4eafc4]/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-10 w-60 h-60 bg-[#2a4a73]/20 rounded-full blur-2xl" />
         </div>
-        <div className="relative max-w-5xl mx-auto px-6 text-center">
+        <div className="relative max-w-5xl mx-auto px-5 sm:px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <span className="inline-block px-4 py-1.5 bg-[#4eafc4]/15 border border-[#4eafc4]/30 text-[#4eafc4] rounded-full text-xs font-semibold tracking-widest uppercase mb-5">
               Assignments · Handouts · Notes
             </span>
-            <h1 className="text-white mb-4" style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.2 }}>
+            <h1 className="text-white mb-4" style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 700, fontSize: "clamp(1.9rem, 6vw, 3rem)", lineHeight: 1.2 }}>
               Resource Library
             </h1>
-            <p className="text-white/60 max-w-xl mx-auto mb-10">
+            <p className="text-white/60 max-w-xl mx-auto mb-8 sm:mb-10 text-sm sm:text-base px-2">
               Browse, download, and contribute study materials shared by the VirtualU community.
             </p>
 
@@ -102,7 +102,7 @@ function ResourcesContent() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by title, course, or keyword..."
-                className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder:text-white/40 outline-none focus:border-[#4eafc4] focus:bg-white/15 transition-all"
+                className="w-full pl-12 pr-4 py-3.5 sm:py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder:text-white/40 outline-none focus:border-[#4eafc4] focus:bg-white/15 transition-all text-sm"
               />
             </div>
           </motion.div>
@@ -114,7 +114,7 @@ function ResourcesContent() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10">
         {authLoading ? (
           <GridSkeleton />
         ) : (
@@ -123,33 +123,35 @@ function ResourcesContent() {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-[#1c3557]/8 p-5 mb-8 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center"
+              className="bg-white rounded-2xl border border-[#1c3557]/8 p-4 sm:p-5 mb-8 shadow-sm flex flex-col gap-4"
             >
-              <Tabs value={tab} onValueChange={(v) => setTab(v as TabKey)}>
-                <TabsList className="flex flex-wrap h-auto bg-[#eef3f7] p-1 rounded-xl gap-1">
-                  {TABS.map((t) => (
-                    <TabsTrigger
-                      key={t.key}
-                      value={t.key}
-                      className="data-[state=active]:bg-white data-[state=active]:text-[#4eafc4] data-[state=active]:shadow-sm text-[#64788f] text-xs px-3 py-1.5 rounded-lg font-medium"
-                    >
-                      {t.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
+              <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+                <Tabs value={tab} onValueChange={(v) => setTab(v as TabKey)}>
+                  <TabsList className="flex flex-wrap h-auto bg-[#eef3f7] p-1 rounded-xl gap-1 w-full sm:w-auto">
+                    {TABS.map((t) => (
+                      <TabsTrigger
+                        key={t.key}
+                        value={t.key}
+                        className="data-[state=active]:bg-white data-[state=active]:text-[#4eafc4] data-[state=active]:shadow-sm text-[#64788f] text-xs px-3 py-1.5 rounded-lg font-medium"
+                      >
+                        {t.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </Tabs>
 
-              <div className="relative md:ml-auto">
-                <select
-                  value={course}
-                  onChange={(e) => setCourse(e.target.value)}
-                  className="pl-4 pr-9 py-2.5 bg-[#f8fafc] border border-[#1c3557]/10 rounded-xl text-[#0f1e35] text-sm outline-none focus:ring-2 focus:ring-[#4eafc4]/30 appearance-none cursor-pointer min-w-[170px]"
-                >
-                  {courses.map((c) => (
-                    <option key={c}>{c}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64788f] pointer-events-none" />
+                <div className="relative sm:ml-auto w-full sm:w-auto">
+                  <select
+                    value={course}
+                    onChange={(e) => setCourse(e.target.value)}
+                    className="w-full sm:min-w-[170px] pl-4 pr-9 py-2.5 bg-[#f8fafc] border border-[#1c3557]/10 rounded-xl text-[#0f1e35] text-sm outline-none focus:ring-2 focus:ring-[#4eafc4]/30 appearance-none cursor-pointer"
+                  >
+                    {courses.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64788f] pointer-events-none" />
+                </div>
               </div>
 
               <div className="text-sm text-[#64788f] whitespace-nowrap">
@@ -160,7 +162,7 @@ function ResourcesContent() {
             {loading ? (
               <GridSkeleton />
             ) : resources.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 {resources.map((r, i) => (
                   <ResourceCard key={r._id} resource={r} index={i} />
                 ))}
@@ -177,7 +179,7 @@ function ResourcesContent() {
 
 function GridSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="bg-white rounded-2xl border border-[#1c3557]/8 p-6 h-64">
           <Skeleton className="h-11 w-11 rounded-xl mb-4" />

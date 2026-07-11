@@ -54,6 +54,18 @@ function formatDate(iso: string) {
   }
 }
 
+function pageRange(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const out: (number | "…")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) out.push("…");
+  for (let p = start; p <= end; p++) out.push(p);
+  if (end < total - 1) out.push("…");
+  out.push(total);
+  return out;
+}
+
 function BlogCard({ post, i }: { post: ApiBlogSummary; i: number }) {
   const catStyle = getCategoryStyle(post.category);
 
@@ -160,7 +172,7 @@ function BlogContent() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Hero Section */}
-      <section className="relative pt-20 lg:pt-[72px] pb-20 overflow-hidden">
+      <section className="relative pt-20 lg:pt-[72px] pb-16 sm:pb-20 overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]" />
         <div className="absolute inset-0 bg-grid-white opacity-[0.03]" />
@@ -169,7 +181,7 @@ function BlogContent() {
         <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-[#4eafc4]/10 rounded-full blur-[120px]" />
         <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-[#2dd4bf]/5 rounded-full blur-[100px]" />
 
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -191,7 +203,7 @@ function BlogContent() {
               style={{
                 fontFamily: "var(--font-playfair), serif",
                 fontWeight: 700,
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                fontSize: "clamp(1.9rem, 6vw, 3.5rem)",
                 lineHeight: 1.15,
                 letterSpacing: "-0.02em",
               }}
@@ -203,7 +215,7 @@ function BlogContent() {
               {" "}& Insights
             </h1>
 
-            <p className="text-white/50 text-base max-w-lg mx-auto leading-relaxed">
+            <p className="text-white/50 text-sm sm:text-base max-w-lg mx-auto leading-relaxed px-2">
               AI-generated study guides and articles crafted for Virtual University students — designed to make learning easier.
             </p>
           </motion.div>
@@ -217,23 +229,23 @@ function BlogContent() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 -mt-8 relative z-10 pb-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 -mt-8 relative z-10 pb-16">
         {/* Search Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="relative max-w-xl mx-auto mb-10">
+          <div className="relative max-w-xl mx-auto mb-8 sm:mb-10">
             <div className="absolute inset-0 bg-gradient-to-r from-[#4eafc4]/20 to-[#2dd4bf]/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
             <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl shadow-sm shadow-gray-200/50 focus-within:border-[#4eafc4] focus-within:shadow-[#4eafc4]/10 focus-within:shadow-lg transition-all duration-300">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
+              <Search className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search articles, topics..."
-                className="w-full pl-12 pr-4 py-3.5 bg-transparent text-[#0f172a] placeholder:text-[#94a3b8] outline-none text-sm"
+                className="w-full pl-11 sm:pl-12 pr-10 sm:pr-4 py-3 sm:py-3.5 bg-transparent text-[#0f172a] placeholder:text-[#94a3b8] outline-none text-sm"
               />
               {search && (
                 <button
@@ -254,13 +266,13 @@ function BlogContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25 }}
-          className="flex gap-2 flex-wrap justify-center mb-12"
+          className="flex gap-2 flex-wrap justify-center mb-8 sm:mb-12"
         >
           {["All", ...categories].map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 ${
                 activeCategory === cat
                   ? "bg-[#0f172a] text-white shadow-lg shadow-gray-900/20 scale-105"
                   : "bg-white text-[#64788b] border border-gray-200 hover:border-[#4eafc4] hover:text-[#4eafc4] hover:shadow-sm"
@@ -274,7 +286,7 @@ function BlogContent() {
         {/* Blog Grid */}
         <AnimatePresence mode="wait">
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6">
                   <div className="flex items-center gap-2 mb-4">
@@ -299,7 +311,7 @@ function BlogContent() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
             >
               {blogs.map((post, i) => (
                 <BlogCard key={post._id} post={post} i={i} />
@@ -331,42 +343,42 @@ function BlogContent() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-3 mt-14"
+            className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-12 sm:mt-14"
           >
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-[#64788b] hover:border-[#4eafc4] hover:text-[#4eafc4] disabled:opacity-40 disabled:cursor-not-allowed transition-all bg-white shadow-sm"
+              className="px-4 sm:px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-[#64788b] hover:border-[#4eafc4] hover:text-[#4eafc4] disabled:opacity-40 disabled:cursor-not-allowed transition-all bg-white shadow-sm"
             >
               Previous
             </button>
 
             <div className="flex items-center gap-1.5">
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                const pageNum = i + 1;
-                return (
+              {pageRange(page, totalPages).map((p, idx) =>
+                p === "…" ? (
+                  <span key={`e${idx}`} className="text-[#94a3b8] px-1">
+                    …
+                  </span>
+                ) : (
                   <button
-                    key={i}
-                    onClick={() => setPage(pageNum)}
+                    key={p}
+                    onClick={() => setPage(p)}
                     className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${
-                      page === pageNum
+                      page === p
                         ? "bg-[#0f172a] text-white shadow-md"
                         : "text-[#64788b] hover:bg-gray-100"
                     }`}
                   >
-                    {pageNum}
+                    {p}
                   </button>
-                );
-              })}
-              {totalPages > 5 && (
-                <span className="text-[#94a3b8] px-1">...</span>
+                )
               )}
             </div>
 
             <button
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-[#64788b] hover:border-[#4eafc4] hover:text-[#4eafc4] disabled:opacity-40 disabled:cursor-not-allowed transition-all bg-white shadow-sm"
+              className="px-4 sm:px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-[#64788b] hover:border-[#4eafc4] hover:text-[#4eafc4] disabled:opacity-40 disabled:cursor-not-allowed transition-all bg-white shadow-sm"
             >
               Next
             </button>
