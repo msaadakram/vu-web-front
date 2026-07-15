@@ -63,7 +63,7 @@ export type BlogSingleResponse = {
 /** POST /api/resources/:id/blog/generate — trigger AI generation */
 export async function generateBlog(
   resourceId: string
-): Promise<{ blog: { _id: string; status: string } }> {
+): Promise<{ status: string; data: { blog: { _id: string; status: string } } }> {
   return api(`/resources/${resourceId}/blog/generate`, {
     method: "POST",
   });
