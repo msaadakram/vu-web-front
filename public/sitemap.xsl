@@ -270,7 +270,7 @@
         </main>
         <footer>
           <p>
-            Powered by <a href="https://virtualuniversity.app">VirtualU</a> &mdash;
+            Powered by <a href="https://virtualuniversity.app">VirtualU</a> &#8212;
             Automated XML Sitemap for Search Engine Optimization
           </p>
         </footer>
