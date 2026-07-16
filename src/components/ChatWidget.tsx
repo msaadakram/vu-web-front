@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MessageCircle, Send, X, Bot, User, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Markdown } from "@/components/Markdown";
 import type { ChatMessage } from "@/lib/chat";
 import { sendChatMessageStream } from "@/lib/chat";
 
@@ -207,13 +208,19 @@ export function ChatWidget() {
                           )}
                           <div
                             className={cn(
-                              "max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words",
+                              "max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed break-words",
                               msg.role === "user"
                                 ? "bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-tr-sm shadow-sm"
                                 : "bg-white text-[#1c3557] rounded-tl-sm shadow-sm border border-[#1c3557]/6"
                             )}
                           >
-                            {msg.content}
+                            {msg.role === "user" ? (
+                              <p className="whitespace-pre-wrap">{msg.content}</p>
+                            ) : streaming && i === messages.length - 1 ? (
+                              <span className="whitespace-pre-wrap">{msg.content}</span>
+                            ) : (
+                              <Markdown content={msg.content} />
+                            )}
                             {streaming &&
                               i === messages.length - 1 &&
                               msg.role === "assistant" && (

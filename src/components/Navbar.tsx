@@ -23,6 +23,7 @@ const navLinks = [
   { href: "/news", label: "News" },
   { href: "/blog", label: "Blog" },
   { href: "/resources", label: "Resources" },
+  { href: "/ai-chat", label: "AI Chat" },
   { href: "/about", label: "About" },
 ];
 
