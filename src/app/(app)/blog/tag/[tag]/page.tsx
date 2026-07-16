@@ -6,7 +6,7 @@ import { SEO_HASHTAGS, getTopHashtags } from "@/lib/seo-hashtags";
 
 type Props = { params: Promise<{ tag: string }> };
 
-const BASE_URL = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://virtualupk.vercel.app";
+const BASE_URL = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://www.virtualupk.vercel.app";
 
 async function fetchPostsByTag(tagSlug: string) {
   try {

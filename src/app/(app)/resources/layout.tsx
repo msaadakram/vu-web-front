@@ -3,7 +3,7 @@ import { type Metadata } from "next";
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.BLOG_PUBLIC_BASE_URL ||
-  "https://virtualupk.vercel.app";
+  "https://www.virtualupk.vercel.app";
 
 export const metadata: Metadata = {
   title: {

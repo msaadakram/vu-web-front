@@ -4,7 +4,7 @@ import { allPrograms } from "@/lib/programs";
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.BLOG_PUBLIC_BASE_URL ||
-  "https://virtualupk.vercel.app";
+  "https://www.virtualupk.vercel.app";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 

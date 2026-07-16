@@ -8,7 +8,7 @@ import { AuthProvider } from "@/lib/auth";
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.BLOG_PUBLIC_BASE_URL ||
-  "https://virtualupk.vercel.app";
+  "https://www.virtualupk.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -143,7 +143,7 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
   manifest: "/manifest.webmanifest",
-  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }], apple: [{ url: "/icon.svg" }] },
+  icons: { icon: [{ url: "/facon.png", type: "image/png" }], apple: [{ url: "/facon.png" }] },
   verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
 };
 

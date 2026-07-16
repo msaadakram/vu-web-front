@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Search, Menu, X, GraduationCap, Upload, LogOut,
+  Search, Menu, X, Upload, LogOut,
   Library, Sparkles, ChevronDown, BookOpen,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -100,11 +101,11 @@ export function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <motion.div
-                whileHover={{ rotate: [0, -8, 8, 0], scale: 1.05 }}
-                transition={{ duration: 0.4 }}
-                className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shadow-lg group-hover:shadow-[#4eafc4]/40 transition-shadow duration-300"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+                className="relative w-9 h-9 lg:w-10 lg:h-10 overflow-hidden rounded-xl shadow-lg"
               >
-                <GraduationCap className="w-[18px] h-[18px] lg:w-5 lg:h-5 text-white" />
+                <Image src="/facon.png" alt="VirtualU" fill className="object-cover" />
               </motion.div>
               <div>
                 <span
@@ -371,8 +372,8 @@ export function Navbar() {
               {/* Drawer header */}
               <div className="flex items-center justify-between px-5 py-5 border-b border-[#1c3557]/6">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center">
-                    <GraduationCap className="w-4 h-4 text-white" />
+                  <div className="relative w-8 h-8 overflow-hidden rounded-lg">
+                    <Image src="/facon.png" alt="VirtualU" fill className="object-cover" />
                   </div>
                   <span className="font-bold text-[#1c3557]" style={{ fontFamily: "'Playfair Display', serif" }}>VirtualU</span>
                 </div>

@@ -18,7 +18,7 @@ import { matchHashtags, getRelatedBlogSlugs } from "@/lib/seo-hashtags";
 
 type Props = { params: Promise<{ slug: string }> };
 
-const BASE_URL = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://virtualupk.vercel.app";
+const BASE_URL = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://www.virtualupk.vercel.app";
 
 async function fetchPost(slug: string) {
   try {
