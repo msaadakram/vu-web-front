@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Suspense, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   Search, Clock, ArrowRight, BookOpen, Sparkles, Eye,
   TrendingUp, Filter, X, ChevronRight, Calendar, Users,
@@ -177,33 +178,54 @@ function BlogCardSkeleton() {
 }
 
 function BlogContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const abortRef = useRef<AbortController | null>(null);
+
   const [blogs, setBlogs] = useState<ApiBlogSummary[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [page, setPage] = useState(1);
+  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "All");
+  const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const searchRef = useRef<HTMLInputElement>(null);
 
+  // Sync filter state to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (search) params.set("q", search);
+    if (activeCategory !== "All") params.set("category", activeCategory);
+    if (page > 1) params.set("page", String(page));
+    const query = params.toString();
+    const newUrl = query ? `${pathname}?${query}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [search, activeCategory, page, router, pathname]);
+
   const fetchBlogs = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
-      const res = await listBlogs({ category: activeCategory, q: search || undefined, page, limit: 12 });
+      const res = await listBlogs({ category: activeCategory, q: search || undefined, page, limit: 12, signal: controller.signal });
       setBlogs(res.data.blogs);
       setCategories(res.data.categories);
       setTotalPages(res.pages || 1);
       setTotalCount(res.total || res.data.blogs.length);
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setBlogs([]);
     } finally {
       setLoading(false);
     }
   }, [activeCategory, search, page]);
 
-  useEffect(() => { fetchBlogs(); }, [fetchBlogs]);
+  useEffect(() => { fetchBlogs(); return () => abortRef.current?.abort(); }, [fetchBlogs]);
   useEffect(() => { setPage(1); }, [activeCategory, search]);
 
   const handleSearchSubmit = (e: React.FormEvent) => { e.preventDefault(); setSearch(searchInput.trim()); };

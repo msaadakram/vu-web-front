@@ -83,6 +83,7 @@ export async function listBlogs(params?: {
   q?: string;
   page?: number;
   limit?: number;
+  signal?: AbortSignal;
 }): Promise<BlogListResponse> {
   const searchParams = new URLSearchParams();
   if (params?.category && params.category !== "All")
@@ -91,7 +92,7 @@ export async function listBlogs(params?: {
   if (params?.page) searchParams.set("page", String(params.page));
   if (params?.limit) searchParams.set("limit", String(params.limit));
   const query = searchParams.toString();
-  return api(`/blog${query ? `?${query}` : ""}`);
+  return api(`/blog${query ? `?${query}` : ""}`, { signal: params?.signal });
 }
 
 /** GET /api/news — list published news posts */
@@ -100,6 +101,7 @@ export async function listNews(params?: {
   q?: string;
   page?: number;
   limit?: number;
+  signal?: AbortSignal;
 }): Promise<BlogListResponse> {
   const searchParams = new URLSearchParams();
   if (params?.category && params.category !== "All")
@@ -108,7 +110,7 @@ export async function listNews(params?: {
   if (params?.page) searchParams.set("page", String(params.page));
   if (params?.limit) searchParams.set("limit", String(params.limit));
   const query = searchParams.toString();
-  return api(`/news${query ? `?${query}` : ""}`);
+  return api(`/news${query ? `?${query}` : ""}`, { signal: params?.signal });
 }
 
 /** GET /api/blog/:slug — fetch single published blog post by slug */

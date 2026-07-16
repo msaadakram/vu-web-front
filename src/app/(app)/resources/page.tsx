@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { motion } from "motion/react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Search, FileText, ChevronDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { api, type ApiResource } from "@/lib/api";
@@ -11,6 +11,7 @@ import { ResourceCard } from "@/components/ResourceCard";
 import { useAuth } from "@/lib/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type TabKey = "all" | ResourceType;
 
@@ -33,35 +34,56 @@ export default function ResourcesPage() {
 function ResourcesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading: authLoading } = useAuth();
+  const abortRef = useRef<AbortController | null>(null);
 
   const [resources, setResources] = useState<ApiResource[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<TabKey>("all");
-  const [course, setCourse] = useState("All Courses");
-  const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [tab, setTab] = useState<TabKey>((searchParams.get("type") as TabKey) || "all");
+  const [course, setCourse] = useState(searchParams.get("course") || "All Courses");
+  const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
+  const debouncedSearch = useDebounce(searchInput, 350);
+
+  // Sync filter state to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (tab !== "all") params.set("type", tab);
+    if (course !== "All Courses") params.set("course", course);
+    if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
+    const query = params.toString();
+    const newUrl = query ? `${pathname}?${query}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [tab, course, debouncedSearch, router, pathname]);
 
   const fetchResources = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (tab !== "all") params.set("type", tab);
       if (course !== "All Courses") params.set("course", course);
-      if (search.trim()) params.set("q", search.trim());
+      if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
       const query = params.toString();
       const res = await api<{ data: { resources: ApiResource[] } }>(
-        `/resources${query ? `?${query}` : ""}`
+        `/resources${query ? `?${query}` : ""}`,
+        { signal: controller.signal }
       );
       setResources(res.data.resources);
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setResources([]);
     } finally {
       setLoading(false);
     }
-  }, [tab, course, search]);
+  }, [tab, course, debouncedSearch]);
 
   useEffect(() => {
     fetchResources();
+    return () => abortRef.current?.abort();
   }, [fetchResources]);
 
   useEffect(() => {
@@ -99,8 +121,8 @@ function ResourcesContent() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by title, course, or keyword..."
                 className="w-full pl-12 pr-4 py-3.5 sm:py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder:text-white/40 outline-none focus:border-[#4eafc4] focus:bg-white/15 transition-all text-sm"
               />
@@ -168,7 +190,7 @@ function ResourcesContent() {
                 ))}
               </div>
             ) : (
-              <EmptyState hasSearch={!!search || course !== "All Courses" || tab !== "all"} />
+              <EmptyState hasSearch={!!debouncedSearch || course !== "All Courses" || tab !== "all"} />
             )}
           </>
         )}

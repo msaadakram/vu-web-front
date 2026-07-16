@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   Search,
   Clock,
@@ -12,7 +13,8 @@ import {
   Calendar,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/lib/api";
+import { listNews, type ApiBlogSummary } from "@/lib/blog";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -161,49 +163,65 @@ function NewsCard({
 }
 
 function NewsContent() {
-  const [news, setNews] = useState<any[]>([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const abortRef = useRef<AbortController | null>(null);
+
+  const [news, setNews] = useState<ApiBlogSummary[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "All");
+  const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
+  const debouncedSearch = useDebounce(searchInput, 350);
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
   const [totalPages, setTotalPages] = useState(1);
 
+  // Sync filter state to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
+    if (activeCategory !== "All") params.set("category", activeCategory);
+    if (page > 1) params.set("page", String(page));
+    const query = params.toString();
+    const newUrl = query ? `${pathname}?${query}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [debouncedSearch, activeCategory, page, router, pathname]);
+
   const fetchNews = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (activeCategory !== "All") params.set("category", activeCategory);
-      if (search.trim()) params.set("q", search.trim());
-      params.set("page", String(page));
-      params.set("limit", "12");
+      const res = await listNews({
+        category: activeCategory,
+        q: debouncedSearch || undefined,
+        page,
+        limit: 12,
+        signal: controller.signal,
+      });
 
-      const res = await api<{
-        status: string;
-        results: number;
-        total: number;
-        page: number;
-        pages: number;
-        data: { blogs: any[]; categories: string[] };
-      }>(`/news?${params.toString()}`);
-
-      setNews(res.data.blogs);
+      setNews(res.data.blogs as ApiBlogSummary[]);
       setCategories(res.data.categories);
       setTotalPages(res.pages || 1);
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setNews([]);
     } finally {
       setLoading(false);
     }
-  }, [activeCategory, search, page]);
+  }, [activeCategory, debouncedSearch, page]);
 
   useEffect(() => {
     fetchNews();
+    return () => abortRef.current?.abort();
   }, [fetchNews]);
 
   useEffect(() => {
     setPage(1);
-  }, [activeCategory, search]);
+  }, [activeCategory, debouncedSearch]);
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -277,14 +295,14 @@ function NewsContent() {
               <Search className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a3b8]" />
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search news..."
                 className="w-full pl-11 sm:pl-12 pr-10 sm:pr-4 py-3 sm:py-3.5 bg-transparent text-[#0f172a] placeholder:text-[#94a3b8] outline-none text-sm"
               />
-              {search && (
+              {searchInput && (
                 <button
-                  onClick={() => setSearch("")}
+                  onClick={() => setSearchInput("")}
                   className="mr-3 p-1 rounded-lg hover:bg-gray-100 text-[#94a3b8] hover:text-[#64788b] transition-colors"
                 >
                   <svg
@@ -347,7 +365,7 @@ function NewsContent() {
             </div>
           ) : news.length > 0 ? (
             <motion.div
-              key={activeCategory + search + page}
+              key={activeCategory + debouncedSearch + page}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -371,8 +389,8 @@ function NewsContent() {
                 No news yet
               </h3>
               <p className="text-[#64788b] text-sm max-w-xs mx-auto">
-                {search
-                  ? `Nothing matches "${search}". Try a different search term.`
+                {debouncedSearch
+                  ? `Nothing matches "${debouncedSearch}". Try a different search term.`
                   : "Check back later for the latest news and announcements."}
               </p>
             </motion.div>
