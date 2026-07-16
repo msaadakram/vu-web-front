@@ -12,13 +12,15 @@ type StreamCallbacks = {
 export async function sendChatMessageStream(
   message: string,
   history: ChatMessage[],
-  { onToken, onDone, onError }: StreamCallbacks
+  { onToken, onDone, onError }: StreamCallbacks,
+  signal?: AbortSignal
 ): Promise<void> {
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, history }),
+      signal,
     });
 
     if (!res.ok) {
@@ -66,6 +68,7 @@ export async function sendChatMessageStream(
 
     onDone();
   } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return;
     onError(err instanceof Error ? err : new Error(String(err)));
   }
 }

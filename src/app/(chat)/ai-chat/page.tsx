@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Bot, User, Send, Trash2, ChevronDown, Sparkles } from "lucide-react";
+import { Bot, User, Send, Trash2, ChevronDown, Sparkles, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Markdown } from "@/components/Markdown";
 import type { ChatMessage } from "@/lib/chat";
@@ -24,26 +24,43 @@ export default function AiChatPage() {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const viewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const atBottomRef = useRef(true);
+  const abortRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = useCallback((smooth = true) => {
     const el = viewportRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "instant" });
+    atBottomRef.current = true;
   }, []);
 
+  // Autofocus the textarea on mount so users can start typing immediately.
   useEffect(() => {
-    if (streaming) {
-      scrollToBottom(false);
-    }
-  }, [messages, streaming, scrollToBottom]);
+    inputRef.current?.focus();
+  }, []);
 
+  // While streaming, keep the view pinned to the bottom only if the user
+  // hasn't scrolled up to read earlier text.
   useEffect(() => {
-    if (!streaming && messages.length > 0) scrollToBottom(true);
-  }, [messages, streaming, scrollToBottom]);
+    if (streaming && atBottomRef.current) {
+      const el = viewportRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
+    }
+  }, [messages, streaming]);
+
+  // After a response finishes, snap to the bottom once.
+  useEffect(() => {
+    if (!streaming && messages.length > 0) {
+      const el = viewportRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
+    }
+  }, [streaming, messages.length]);
 
   const handleScroll = useCallback(() => {
     const el = viewportRef.current;
     if (!el) return;
-    setShowScrollBtn(el.scrollHeight - el.scrollTop - el.clientHeight > 80);
+    const dist = el.scrollHeight - el.scrollTop - el.clientHeight;
+    atBottomRef.current = dist < 40;
+    setShowScrollBtn(dist > 80);
   }, []);
 
   const handleSend = useCallback(async () => {
@@ -59,29 +76,54 @@ export default function AiChatPage() {
     setMessages((prev) => [...prev, assistantMsg]);
 
     const history = messages.map(({ role, content }) => ({ role, content }));
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-    await sendChatMessageStream(text, history, {
-      onToken: (token) => {
-        setMessages((prev) => {
-          const next = [...prev];
-          const last = next[next.length - 1];
-          if (last?.role === "assistant") last.content += token;
-          return next;
-        });
+    await sendChatMessageStream(
+      text,
+      history,
+      {
+        onToken: (token) => {
+          setMessages((prev) => {
+            const next = [...prev];
+            const last = next[next.length - 1];
+            if (last?.role === "assistant") {
+              next[next.length - 1] = { ...last, content: last.content + token };
+            }
+            return next;
+          });
+        },
+        onDone: () => {
+          setStreaming(false);
+          abortRef.current = null;
+          setTimeout(() => inputRef.current?.focus(), 0);
+        },
+        onError: (err) => {
+          setMessages((prev) => {
+            const next = [...prev];
+            const last = next[next.length - 1];
+            if (last?.role === "assistant" && !last.content) {
+              next[next.length - 1] = {
+                ...last,
+                content: err.message || "Sorry, I couldn't process that right now. Please try again.",
+              };
+            }
+            return next;
+          });
+          setStreaming(false);
+          abortRef.current = null;
+        },
       },
-      onDone: () => setStreaming(false),
-      onError: () => {
-        setMessages((prev) => {
-          const next = [...prev];
-          const last = next[next.length - 1];
-          if (last?.role === "assistant" && !last.content)
-            last.content = "Sorry, I couldn't process that right now. Please try again.";
-          return next;
-        });
-        setStreaming(false);
-      },
-    });
+      controller.signal
+    );
   }, [input, streaming, messages]);
+
+  const handleStop = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setStreaming(false);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -103,7 +145,7 @@ export default function AiChatPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-4xl flex flex-col h-full">
+    <div className="mx-auto w-full max-w-4xl flex flex-col h-full max-h-full min-h-0">
       {/* Header */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-[#1c3557]/10 bg-white/60 backdrop-blur-sm shrink-0">
         <div className="flex items-center gap-2.5 sm:gap-3">
@@ -185,8 +227,14 @@ export default function AiChatPage() {
                     >
                       {msg.role === "user" ? (
                         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                      ) : streaming && i === messages.length - 1 ? (
+                      ) : streaming && i === messages.length - 1 && msg.content ? (
                         <span className="whitespace-pre-wrap break-words">{msg.content}</span>
+                      ) : streaming && i === messages.length - 1 ? (
+                        <span className="flex items-center gap-1.5 py-0.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#4eafc4]/60 animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#4eafc4]/60 animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#4eafc4]/60 animate-bounce" style={{ animationDelay: "300ms" }} />
+                        </span>
                       ) : (
                         <Markdown content={msg.content} />
                       )}
@@ -232,18 +280,18 @@ export default function AiChatPage() {
             onKeyDown={handleKeyDown}
             placeholder="Ask anything about VU..."
             rows={1}
-            disabled={streaming}
+            autoFocus
             className="flex-1 min-h-[44px] sm:min-h-[52px] max-h-[140px] sm:max-h-[160px] px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-white border border-[#1c3557]/12 text-sm text-[#1c3557] placeholder:text-[#64788f]/70 outline-none focus:ring-2 focus:ring-[#4eafc4]/40 focus:border-[#4eafc4] transition-all resize-none shadow-sm"
             style={{ scrollbarWidth: "none" }}
           />
           <button
-            onClick={handleSend}
-            disabled={!input.trim() || streaming}
+            onClick={streaming ? handleStop : handleSend}
+            disabled={!streaming && !input.trim()}
             className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] rounded-xl sm:rounded-2xl bg-[#1c3557] text-white flex items-center justify-center shrink-0 disabled:opacity-35 disabled:cursor-not-allowed transition-all hover:bg-[#2a4a73] hover:shadow-lg active:scale-95"
-            aria-label="Send"
+            aria-label={streaming ? "Stop generating" : "Send"}
           >
             {streaming ? (
-              <span className="block w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <Square className="w-[15px] h-[15px] sm:w-[18px] sm:h-[18px] fill-white" />
             ) : (
               <Send className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px]" />
             )}
