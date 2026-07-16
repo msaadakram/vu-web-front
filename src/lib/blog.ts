@@ -66,6 +66,7 @@ export async function generateBlog(
 ): Promise<{ status: string; data: { blog: { _id: string; status: string } } }> {
   return api(`/resources/${resourceId}/blog/generate`, {
     method: "POST",
+    body: {},
   });
 }
 

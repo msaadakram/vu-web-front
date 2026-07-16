@@ -32,14 +32,19 @@ export async function api<T = unknown>(
 ): Promise<T> {
   const token = getToken();
 
+  const fetchHeaders: Record<string, string> = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...(headers as Record<string, string> | undefined),
+  };
+  const hasBody = body !== undefined;
+  if (hasBody) {
+    fetchHeaders["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(`${BASE_URL}${path}`, {
     ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers: fetchHeaders,
+    ...(hasBody ? { body: JSON.stringify(body) } : {}),
   });
 
   const isJson = res.headers.get("content-type")?.includes("application/json");
