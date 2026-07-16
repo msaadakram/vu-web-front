@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0"
+<xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -179,7 +178,7 @@
           <h1>XML Sitemap</h1>
           <p class="subtitle">VirtualU — Virtual University of Pakistan Study Portal</p>
           <p class="meta">
-            <span>Generated: <xsl:value-of select="current-dateTime()"/></span>
+            <span>Virtual University of Pakistan &#8212; Study Portal</span>
           </p>
         </header>
         <main>
