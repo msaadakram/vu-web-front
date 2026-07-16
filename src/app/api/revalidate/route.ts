@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     "/sitemap_index.xml",
     "/sitemap/blog.xml",
     "/sitemap/news.xml",
+    "/sitemap/programs.xml",
     "/sitemap/resources.xml",
     "/sitemap/whats-new.xml",
     "/whats-new",

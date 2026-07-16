@@ -1,9 +1,7 @@
 import { type MetadataRoute } from "next";
+import { getBaseUrl } from "@/lib/sitemap";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL ||
-  process.env.BLOG_PUBLIC_BASE_URL ||
-  "https://www.virtualupk.vercel.app";
+const BASE_URL = getBaseUrl();
 
 export const revalidate = 3600;
 
