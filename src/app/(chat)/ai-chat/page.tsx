@@ -32,8 +32,7 @@ export default function AiChatPage() {
 
   useEffect(() => {
     if (streaming) {
-      const raf = requestAnimationFrame(() => scrollToBottom(true));
-      return () => cancelAnimationFrame(raf);
+      scrollToBottom(false);
     }
   }, [messages, streaming, scrollToBottom]);
 
@@ -138,7 +137,7 @@ export default function AiChatPage() {
               </div>
               <h2 className="text-lg sm:text-xl font-bold text-[#1c3557] mb-1.5">How can I help you?</h2>
               <p className="text-sm text-[#64788f] mb-6 sm:mb-8 max-w-md px-2">
-                Ask me anything about Virtual University of Pakistan &mdash; programs, admission, courses, fee structure, study resources, and more.
+                Ask me anything about Virtual University of Pakistan — programs, admission, courses, fee structure, study resources, and more.
               </p>
               <div className="flex flex-wrap gap-2 justify-center max-w-lg px-2">
                 {SUGGESTIONS.map((s) => (

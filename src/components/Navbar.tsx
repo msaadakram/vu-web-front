@@ -42,11 +42,12 @@ export function Navbar() {
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 40);
+    const isChat = pathname === "/ai-chat";
+    const handler = () => setScrolled(window.scrollY > 40 || isChat);
     window.addEventListener("scroll", handler, { passive: true });
     handler();
     return () => window.removeEventListener("scroll", handler);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 

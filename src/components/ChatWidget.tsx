@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { MessageCircle, Send, X, Bot, User, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,9 @@ const SUGGESTIONS = [
 ];
 
 export function ChatWidget() {
+  const pathname = usePathname();
+  if (pathname === "/ai-chat") return null;
+
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
