@@ -92,7 +92,7 @@ export function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
+          scrolled || mobileOpen
             ? "bg-white/95 backdrop-blur-2xl shadow-[0_4px_32px_rgba(28,53,87,0.08)] border-b border-[#1c3557]/6"
             : "bg-transparent"
         }`}
@@ -112,7 +112,7 @@ export function Navbar() {
               <div>
                 <span
                   className={`block font-bold leading-none transition-colors duration-300 ${
-                    scrolled ? "text-[#1c3557]" : "text-white"
+                    scrolled || mobileOpen ? "text-[#1c3557]" : "text-white"
                   }`}
                   style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem" }}
                 >
@@ -135,7 +135,7 @@ export function Navbar() {
                     className={`relative px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 group ${
                       active
                         ? "text-[#4eafc4]"
-                        : scrolled
+                        : scrolled || mobileOpen
                           ? "text-[#1c3557]/75 hover:text-[#1c3557]"
                           : "text-white/80 hover:text-white"
                     }`}
@@ -143,7 +143,7 @@ export function Navbar() {
                     <span className={`absolute inset-0 rounded-lg transition-opacity duration-200 ${
                       active
                         ? "opacity-100 bg-[#4eafc4]/8"
-                        : "opacity-0 group-hover:opacity-100 " + (scrolled ? "bg-[#f0f7fa]" : "bg-white/8")
+                        : "opacity-0 group-hover:opacity-100 " + (scrolled || mobileOpen ? "bg-[#f0f7fa]" : "bg-white/8")
                     }`} />
                     <span className="relative">{link.label}</span>
                     {active && (
@@ -164,7 +164,7 @@ export function Navbar() {
                 whileTap={{ scale: 0.92 }}
                 onClick={() => setSearchOpen((v) => !v)}
                 className={`p-2.5 rounded-xl transition-all duration-200 ${
-                  scrolled
+                  scrolled || mobileOpen
                     ? "text-[#1c3557]/60 hover:bg-[#f0f7fa] hover:text-[#4eafc4]"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
@@ -187,16 +187,16 @@ export function Navbar() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className={`flex items-center gap-2 px-2 py-1.5 rounded-full border transition-all duration-200 ${
-                        scrolled ? "border-[#1c3557]/10 hover:bg-[#f0f7fa]" : "border-white/15 hover:bg-white/10"
+                        scrolled || mobileOpen ? "border-[#1c3557]/10 hover:bg-[#f0f7fa]" : "border-white/15 hover:bg-white/10"
                       }`}>
                         <span className="w-7 h-7 rounded-full bg-gradient-to-br from-[#1c3557] to-[#4eafc4] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                           {initials(user.name)}
                         </span>
                         <span className={`text-xs font-semibold hidden lg:block ${
-                          scrolled ? "text-[#1c3557]" : "text-white"
+                          scrolled || mobileOpen ? "text-[#1c3557]" : "text-white"
                         }`}>{user.name.split(" ")[0]}</span>
                         <ChevronDown className={`w-3 h-3 hidden lg:block ${
-                          scrolled ? "text-[#1c3557]/40" : "text-white/40"
+                          scrolled || mobileOpen ? "text-[#1c3557]/40" : "text-white/40"
                         }`} />
                       </button>
                     </DropdownMenuTrigger>
@@ -240,7 +240,7 @@ export function Navbar() {
                   <Link
                     href="/login"
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                      scrolled ? "text-[#1c3557]/75 hover:bg-[#f0f7fa] hover:text-[#1c3557]" : "text-white/80 hover:bg-white/10 hover:text-white"
+                      scrolled || mobileOpen ? "text-[#1c3557]/75 hover:bg-[#f0f7fa] hover:text-[#1c3557]" : "text-white/80 hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     Login
@@ -262,7 +262,7 @@ export function Navbar() {
               <button
                 onClick={() => setSearchOpen((v) => !v)}
                 className={`p-2.5 rounded-xl transition-colors ${
-                  scrolled ? "text-[#1c3557]/70 hover:bg-[#f0f7fa]" : "text-white/80 hover:bg-white/10"
+                  scrolled || mobileOpen ? "text-[#1c3557]/70 hover:bg-[#f0f7fa]" : "text-white/80 hover:bg-white/10"
                 }`}
                 aria-label="Search"
               >
@@ -272,7 +272,7 @@ export function Navbar() {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className={`p-2.5 rounded-xl transition-colors ${
-                  scrolled || mobileOpen ? "text-[#1c3557] hover:bg-[#f0f7fa]" : "text-white hover:bg-white/10"
+                  scrolled || mobileOpen ? "text-[#1c3557] hover:bg-[#f0f7fa]" : "text-white/90 hover:bg-white/10"
                 }`}
                 aria-label="Toggle menu"
               >

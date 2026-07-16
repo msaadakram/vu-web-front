@@ -103,157 +103,155 @@ export default function AiChatPage() {
   };
 
   return (
-    <div className="fixed inset-x-0 top-16 lg:top-[72px] bottom-0 flex flex-col bg-white/60 backdrop-blur">
-      <div className="mx-auto w-full max-w-4xl flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-[#1c3557]/8 bg-white/80 shrink-0">
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shadow-sm">
-              <Sparkles className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-white" />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-green-400 rounded-full border-2 border-white" />
+    <div className="mx-auto w-full max-w-4xl flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-[#1c3557]/10 bg-white/60 backdrop-blur-sm shrink-0">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shadow-sm">
+            <Sparkles className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-white" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-green-500 rounded-full border-2 border-white" />
+          </div>
+          <div>
+            <h1 className="text-base sm:text-lg font-bold text-[#1c3557] leading-tight">VirtualU AI</h1>
+            <p className="text-[11px] sm:text-xs text-[#64788f] leading-tight">Ask me anything about VU</p>
+          </div>
+        </div>
+        {messages.length > 0 && (
+          <button
+            onClick={clearChat}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-[#64788f] hover:text-[#1c3557] hover:bg-[#e8f4f7] transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Clear</span>
+          </button>
+        )}
+      </div>
+
+      {/* Messages */}
+      <div className="relative flex-1 min-h-0">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full px-6 py-8 sm:py-12 text-center">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#e8f4f7] to-white border border-[#1c3557]/8 flex items-center justify-center mb-4 sm:mb-5 shadow-sm">
+              <Bot className="w-8 h-8 sm:w-10 sm:h-10 text-[#4eafc4]" />
             </div>
-            <div>
-              <h1 className="text-base sm:text-lg font-bold text-[#1c3557] leading-tight">VirtualU AI</h1>
-              <p className="text-[11px] sm:text-xs text-[#64788f] leading-tight">Ask me anything about VU</p>
+            <h2 className="text-lg sm:text-xl font-bold text-[#1c3557] mb-1.5">How can I help you?</h2>
+            <p className="text-sm text-[#64788f] mb-6 sm:mb-8 max-w-md px-2">
+              Ask me anything about Virtual University of Pakistan — programs, admission, courses, fee structure, study resources, and more.
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center max-w-lg px-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setInput(s);
+                    setTimeout(() => inputRef.current?.focus(), 50);
+                  }}
+                  className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-[#1c3557] border border-[#1c3557]/12 hover:border-[#4eafc4] hover:bg-[#e8f4f7] hover:text-[#1c3557] transition-all shadow-sm"
+                >
+                  {s}
+                </button>
+              ))}
             </div>
           </div>
-          {messages.length > 0 && (
-            <button
-              onClick={clearChat}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium text-[#64788f] hover:text-red-500 hover:bg-red-50 transition-colors"
+        ) : (
+          <>
+            <div
+              ref={viewportRef}
+              onScroll={handleScroll}
+              className="h-full overflow-y-auto scroll-smooth px-3 sm:px-6 py-3 sm:py-4"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(28,53,87,0.18) transparent" }}
             >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Clear</span>
-            </button>
-          )}
-        </div>
-
-        {/* Messages */}
-        <div className="relative flex-1 min-h-0">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full px-6 py-8 sm:py-12 text-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#4eafc4]/15 to-[#1c3557]/10 flex items-center justify-center mb-4 sm:mb-5">
-                <Bot className="w-8 h-8 sm:w-10 sm:h-10 text-[#4eafc4]" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-bold text-[#1c3557] mb-1.5">How can I help you?</h2>
-              <p className="text-sm text-[#64788f] mb-6 sm:mb-8 max-w-md px-2">
-                Ask me anything about Virtual University of Pakistan — programs, admission, courses, fee structure, study resources, and more.
-              </p>
-              <div className="flex flex-wrap gap-2 justify-center max-w-lg px-2">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => {
-                      setInput(s);
-                      setTimeout(() => inputRef.current?.focus(), 50);
-                    }}
-                    className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-white text-[#4eafc4] border border-[#4eafc4]/20 hover:bg-[#4eafc4]/8 hover:border-[#4eafc4]/40 transition-all shadow-sm"
+              <div className="space-y-3 sm:space-y-4 max-w-3xl mx-auto">
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "flex gap-2 sm:gap-3",
+                      msg.role === "user" ? "justify-end" : "justify-start"
+                    )}
                   >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <>
-              <div
-                ref={viewportRef}
-                onScroll={handleScroll}
-                className="h-full overflow-y-auto scroll-smooth px-3 sm:px-6 py-3 sm:py-4"
-                style={{ scrollbarWidth: "thin", scrollbarColor: "#e8edf2 transparent" }}
-              >
-                <div className="space-y-3 sm:space-y-4 max-w-3xl mx-auto">
-                  {messages.map((msg, i) => (
+                    {msg.role === "assistant" && (
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </div>
+                    )}
                     <div
-                      key={i}
                       className={cn(
-                        "flex gap-2 sm:gap-3",
-                        msg.role === "user" ? "justify-end" : "justify-start"
+                        "max-w-[88%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm leading-relaxed",
+                        msg.role === "user"
+                          ? "bg-[#1c3557] text-white rounded-tr-sm"
+                          : "bg-white text-[#1c3557] rounded-tl-sm border border-[#1c3557]/8 shadow-sm"
                       )}
                     >
-                      {msg.role === "assistant" && (
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#4eafc4] to-[#1c3557] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                          <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </div>
+                      {msg.role === "user" ? (
+                        <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                      ) : streaming && i === messages.length - 1 ? (
+                        <span className="whitespace-pre-wrap break-words">{msg.content}</span>
+                      ) : (
+                        <Markdown content={msg.content} />
                       )}
-                      <div
-                        className={cn(
-                          "max-w-[88%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm leading-relaxed",
-                          msg.role === "user"
-                            ? "bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white rounded-tr-sm shadow-sm"
-                            : "bg-white text-[#1c3557] rounded-tl-sm shadow-sm border border-[#1c3557]/6"
-                        )}
-                      >
-                        {msg.role === "user" ? (
-                          <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                        ) : streaming && i === messages.length - 1 ? (
-                          <span className="whitespace-pre-wrap break-words">{msg.content}</span>
-                        ) : (
-                          <Markdown content={msg.content} />
-                        )}
-                        {streaming && i === messages.length - 1 && msg.role === "assistant" && (
-                          <span className="inline-block w-[3px] h-[14px] sm:h-[15px] bg-[#4eafc4] ml-0.5 animate-pulse align-text-bottom" />
-                        )}
-                      </div>
-                      {msg.role === "user" && (
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#e8edf2] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                          <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#64788f]" />
-                        </div>
+                      {streaming && i === messages.length - 1 && msg.role === "assistant" && (
+                        <span className="inline-block w-[3px] h-[14px] sm:h-[15px] bg-[#4eafc4] ml-0.5 animate-pulse align-text-bottom" />
                       )}
                     </div>
-                  ))}
-                  <div className="h-3 sm:h-4" />
-                </div>
+                    {msg.role === "user" && (
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#e8f4f7] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1c3557]/70" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div className="h-3 sm:h-4" />
               </div>
+            </div>
 
-              <AnimatePresence>
-                {showScrollBtn && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    onClick={() => scrollToBottom(true)}
-                    className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white shadow-lg border border-[#1c3557]/10 flex items-center justify-center text-[#64788f] hover:text-[#4eafc4] hover:border-[#4eafc4]/30 transition-all"
-                  >
-                    <ChevronDown className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px]" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
-            </>
-          )}
-        </div>
-
-        {/* Input */}
-        <div className="px-3 sm:px-6 py-3 sm:py-4 border-t border-[#1c3557]/8 bg-white/80 shrink-0">
-          <div className="flex items-end gap-2 sm:gap-3 max-w-3xl mx-auto">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={autoResize}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask anything about VU..."
-              rows={1}
-              disabled={streaming}
-              className="flex-1 min-h-[44px] sm:min-h-[52px] max-h-[140px] sm:max-h-[160px] px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#f0f7fa] border-none text-sm text-[#1c3557] placeholder:text-[#64788f]/50 outline-none focus:ring-2 focus:ring-[#4eafc4]/25 transition-all resize-none"
-              style={{ scrollbarWidth: "none" }}
-            />
-            <button
-              onClick={handleSend}
-              disabled={!input.trim() || streaming}
-              className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white flex items-center justify-center shrink-0 disabled:opacity-35 disabled:cursor-not-allowed transition-all hover:shadow-lg hover:shadow-[#4eafc4]/30 active:scale-95"
-              aria-label="Send"
-            >
-              {streaming ? (
-                <span className="block w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <Send className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px]" />
+            <AnimatePresence>
+              {showScrollBtn && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={() => scrollToBottom(true)}
+                  className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white shadow-lg border border-[#1c3557]/10 flex items-center justify-center text-[#1c3557] hover:bg-[#e8f4f7] transition-all"
+                >
+                  <ChevronDown className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px]" />
+                </motion.button>
               )}
-            </button>
-          </div>
-          <p className="text-[10px] sm:text-[11px] text-[#64788f]/40 text-center mt-2 sm:mt-2.5 max-w-3xl mx-auto">
-            AI responses are generated by AI and may be inaccurate. Verify important information from official VU sources.
-          </p>
+            </AnimatePresence>
+          </>
+        )}
+      </div>
+
+      {/* Input */}
+      <div className="px-3 sm:px-6 py-3 sm:py-4 border-t border-[#1c3557]/10 bg-white/60 backdrop-blur-sm shrink-0">
+        <div className="flex items-end gap-2 sm:gap-3 max-w-3xl mx-auto">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={autoResize}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask anything about VU..."
+            rows={1}
+            disabled={streaming}
+            className="flex-1 min-h-[44px] sm:min-h-[52px] max-h-[140px] sm:max-h-[160px] px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-white border border-[#1c3557]/12 text-sm text-[#1c3557] placeholder:text-[#64788f]/70 outline-none focus:ring-2 focus:ring-[#4eafc4]/40 focus:border-[#4eafc4] transition-all resize-none shadow-sm"
+            style={{ scrollbarWidth: "none" }}
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim() || streaming}
+            className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] rounded-xl sm:rounded-2xl bg-[#1c3557] text-white flex items-center justify-center shrink-0 disabled:opacity-35 disabled:cursor-not-allowed transition-all hover:bg-[#2a4a73] hover:shadow-lg active:scale-95"
+            aria-label="Send"
+          >
+            {streaming ? (
+              <span className="block w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <Send className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px]" />
+            )}
+          </button>
         </div>
+        <p className="text-[10px] sm:text-[11px] text-[#64788f]/80 text-center mt-2 sm:mt-2.5 max-w-3xl mx-auto">
+          AI responses are generated by AI and may be inaccurate. Verify important information from official VU sources.
+        </p>
       </div>
     </div>
   );

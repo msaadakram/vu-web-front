@@ -116,7 +116,7 @@ export function ChatWidget() {
         whileTap={{ scale: 0.9 }}
         onClick={() => setOpen(true)}
         className={cn(
-          "fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-shadow duration-300",
+          "fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-shadow duration-300",
           open ? "hidden" : "flex",
           "bg-gradient-to-br from-[#4eafc4] to-[#2a8aa3] hover:shadow-[0_8px_32px_rgba(78,175,196,0.45)]"
         )}
@@ -137,8 +137,8 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-5 right-5 z-50 w-[400px] max-w-[calc(100vw-2.5rem)] h-[600px] max-h-[calc(100vh-6rem)] bg-white/80 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/40 flex flex-col overflow-hidden"
-            style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.15)" }}
+            className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:bottom-5 sm:right-5 z-50 w-auto sm:w-[400px] sm:max-w-[calc(100vw-2.5rem)] h-[calc(100vh-7rem)] sm:h-[600px] sm:max-h-[calc(100vh-6rem)] bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-[#1c3557]/10 flex flex-col overflow-hidden"
+            style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.18)" }}
           >
             <div className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-[#4eafc4] to-[#2a8aa3] text-white shrink-0">
               <div className="flex items-center gap-3">
@@ -259,7 +259,7 @@ export function ChatWidget() {
               )}
             </div>
 
-            <div className="px-4 py-3 border-t border-[#1c3557]/8 bg-white/60 backdrop-blur shrink-0">
+            <div className="px-3 sm:px-4 py-3 border-t border-[#1c3557]/8 bg-white/70 backdrop-blur shrink-0">
               <div className="flex items-end gap-2">
                 <textarea
                   ref={inputRef}
@@ -269,7 +269,7 @@ export function ChatWidget() {
                   placeholder="Ask anything..."
                   rows={1}
                   disabled={streaming}
-                  className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 rounded-2xl bg-[#f0f7fa] border-none text-sm text-[#1c3557] placeholder:text-[#64788f]/50 outline-none focus:ring-2 focus:ring-[#4eafc4]/25 transition-all resize-none"
+                  className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 rounded-2xl bg-[#f0f7fa] border border-transparent text-sm text-[#1c3557] placeholder:text-[#64788f]/50 outline-none focus:ring-2 focus:ring-[#4eafc4]/25 focus:bg-white transition-all resize-none"
                   style={{ scrollbarWidth: "none" }}
                 />
                 <button
