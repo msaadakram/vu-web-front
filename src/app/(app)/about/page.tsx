@@ -41,12 +41,6 @@ function ValueCard({ value, i }: { value: (typeof values)[0]; i: number }) {
   );
 }
 
-export const metadata = {
-  title: "About VirtualU — Independent VU Study Hub",
-  description: "VirtualU is an independent, community-driven study hub for Virtual University of Pakistan students. Not affiliated with vu.edu.pk. Browse BSCS subjects, opencourseware, and admission guides.",
-  alternates: { canonical: "/about" },
-};
-
 export default function AboutPage() {
   const missionRef = useRef(null);
   const missionInView = useInView(missionRef, { once: true, margin: "-80px" });
