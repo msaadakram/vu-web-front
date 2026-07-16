@@ -194,7 +194,7 @@ export function Footer() {
             </div>
             <div className="flex flex-col gap-2.5">
               {[
-                { icon: Mail, text: "support@virtualu.edu.pk" },
+                { icon: Mail, text: "hello@virtualuniversity.app" },
                 { icon: MapPin, text: "Islamabad, Pakistan" },
               ].map(({ icon: Icon, text }) => (
                 <div
@@ -251,9 +251,9 @@ export function Footer() {
             ))}
           </div>
           <div className="flex gap-5 text-xs text-white/35">
-            <Link href="/about" className="hover:text-white/70 transition-colors">Privacy</Link>
-            <Link href="/about" className="hover:text-white/70 transition-colors">Terms</Link>
-            <Link href="/about" className="hover:text-white/70 transition-colors">Contact</Link>
+            <Link href="/privacy" className="hover:text-white/70 transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white/70 transition-colors">Terms</Link>
+            <Link href="/contact" className="hover:text-white/70 transition-colors">Contact</Link>
             <Link href="/sitemap" className="hover:text-white/70 transition-colors">Sitemap</Link>
           </div>
         </div>

@@ -12,11 +12,9 @@ const BASE_URL = getBaseUrl();
 export const revalidate = 86400;
 
 export async function GET() {
-  const now = new Date();
-
   const urls = allPrograms
     .map((prog) =>
-      urlEntry(`${BASE_URL}/programs/${prog.slug}`, now, "monthly", 0.7)
+      urlEntry(`${BASE_URL}/programs/${prog.slug}`)
     )
     .join("\n");
 

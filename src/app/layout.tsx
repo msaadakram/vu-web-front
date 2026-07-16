@@ -14,17 +14,20 @@ const BASE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "VirtualU — BSCS Subjects, BS Computer Science, Uni Admission & VU Programs",
+    default: "BSCS Subjects List, BS Computer Sciences & VU Admission | VirtualU",
     template: "%s | VirtualU",
   },
   description:
-    "VirtualU is Pakistan's #1 study hub for Virtual University students. Explore BSCS subjects list semester-wise, BS Computer Sciences courses, opencourseware resources, uni admission guides, VU LMS login, BS Software Engineering, BS Accounting and Finance, MBA, BBA, MS programs and fee structures.",
+    "Free BSCS subjects list semester-wise, BS Computer Sciences courses, opencourseware, VU LMS & admission guides, MBA, BBA, MS programs and fee structure for Virtual University of Pakistan students.",
   keywords: [
+    // 50000+ monthly searches — top priority (from Keyword Stats 2026-07-11)
+    "bs computer sciences",
     // 5000+ monthly searches
     "bscs subjects",
     "bscs subjects list",
     "opencourseware",
     "uni admission",
+    "ocw website",
     // 500+ monthly searches
     "bs software engineering",
     "bs accounting and finance",
@@ -36,9 +39,16 @@ export const metadata: Metadata = {
     "bs maths",
     "bscs subjects list in pakistan",
     "bscs courses",
-    "bs computer sciences",
     "vu pak",
     "vu university lahore",
+    "virtual university pk",
+    "virtual university book shop",
+    "virtual universities in pakistan",
+    "virtual uni of pakistan",
+    "students lms",
+    "vu degree verification",
+    "msc mass communication",
+    "bed secondary",
     // Admission keywords
     "admission in vu",
     "admission virtual university",
@@ -101,6 +111,14 @@ export const metadata: Metadata = {
     // Fee structure
     "virtual university bba fee structure",
     "vu overseas fee structure",
+    "vu overseas fee",
+    // LMS login keywords
+    "vu lms portal",
+    "vu login lms",
+    "vu lms pk",
+    "vu lms id",
+    "vu lms sign out",
+    "vu login admission",
     // General brand
     "Virtual University of Pakistan",
     "VU",
@@ -167,20 +185,20 @@ const organizationLd = {
   url: BASE,
   description:
     "Virtual University of Pakistan — Pakistan's first online university offering BS, MS, MBA, MPA, BBA and PhD programs via distance learning. VirtualU provides opencourseware resources, BSCS subjects list, study schemes, VU LMS guides, uni admission info, and exam preparation materials.",
-  address: { "@type": "PostalAddress", addressLocality: "Lahore", addressCountry: "PK" },
+  address: { "@type": "PostalAddress", addressLocality: "Lahore", addressRegion: "Punjab", addressCountry: "PK" },
   sameAs: ["https://www.vu.edu.pk/"],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "VU Academic Programs",
     itemListElement: [
-      { "@type": "Course", name: "BS Computer Sciences (BSCS)", description: "4-year BS program covering BSCS subjects semester-wise: data structures, algorithms, OOP, databases, and software engineering." },
-      { "@type": "Course", name: "BS Software Engineering (BSSE)", description: "4-year online BS software engineering degree at Virtual University of Pakistan with industry-relevant subjects." },
-      { "@type": "Course", name: "MBA Virtual University", description: "1.5 to 2.5 year MBA and MBA Executive programs. Virtual University MBA fee structure and subjects available." },
-      { "@type": "Course", name: "BS Accounting & Finance", description: "4-year undergraduate degree in BS Accounting and Finance from Virtual University of Pakistan." },
-      { "@type": "Course", name: "MS Computer Science", description: "2-year MS Computer Science program with advanced subjects in AI, networking, and software engineering." },
-      { "@type": "Course", name: "BBA Virtual University", description: "Bachelor of Business Administration offered online by Virtual University of Pakistan with full fee structure." },
-      { "@type": "Course", name: "MS in Mass Communication", description: "MS Mass Communication program at Virtual University — one of the fastest-growing programs with 900% YoY search growth." },
-      { "@type": "Course", name: "BS in Biotechnology", description: "BS Biotechnology offered by Virtual University of Pakistan as part of its natural sciences programs." },
+      { "@type": "Course", name: "BS Computer Sciences (BSCS)", description: "4-year BS program covering BSCS subjects semester-wise: data structures, algorithms, OOP, databases, and software engineering.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs/bs-computer-science` },
+      { "@type": "Course", name: "BS Software Engineering (BSSE)", description: "4-year online BS software engineering degree at Virtual University of Pakistan with industry-relevant subjects.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs/bs-software-engineering` },
+      { "@type": "Course", name: "MBA Virtual University", description: "1.5 to 2.5 year MBA and MBA Executive programs. Virtual University MBA fee structure and subjects available.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs#graduate` },
+      { "@type": "Course", name: "BS Accounting & Finance", description: "4-year undergraduate degree in BS Accounting and Finance from Virtual University of Pakistan.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs/bs-accounting-finance` },
+      { "@type": "Course", name: "MS Computer Science", description: "2-year MS Computer Science program with advanced subjects in AI, networking, and software engineering.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs/ms-computer-science` },
+      { "@type": "Course", name: "BBA Virtual University", description: "Bachelor of Business Administration offered online by Virtual University of Pakistan with full fee structure.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs#undergraduate` },
+      { "@type": "Course", name: "MS in Mass Communication", description: "MS Mass Communication program at Virtual University — one of the fastest-growing programs with 900% YoY search growth.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs#graduate` },
+      { "@type": "Course", name: "BS in Biotechnology", description: "BS Biotechnology offered by Virtual University of Pakistan as part of its natural sciences programs.", provider: { "@type": "Organization", name: "Virtual University of Pakistan" }, url: `${BASE}/programs#undergraduate` },
     ],
   },
 };
@@ -204,6 +222,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <meta name="google-adsense-account" content="ca-pub-5487423854561897" />
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationLd, websiteLd]) }} />
       </head>
       <body className="font-sans antialiased bg-[#f8fafc] min-h-screen flex flex-col overflow-x-hidden">

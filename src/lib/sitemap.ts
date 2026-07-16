@@ -20,20 +20,20 @@ function isoDate(date: Date): string {
   return date.toISOString();
 }
 
+// Emits only <loc> and (optionally) <lastmod>. The deprecated <priority> and
+// <changefreq> tags are no longer written — Google has ignored both since
+// 2014 and they only bloat the file. lastmod is omitted when not provided so
+// we never emit a fake uniform timestamp.
 export function urlEntry(
   loc: string,
-  lastmod: Date,
-  changefreq: string,
-  priority: number
+  lastmod?: Date | null,
+  _changefreq?: string,
+  _priority?: number
 ): string {
-  return [
-    "  <url>",
-    `    <loc>${xmlEscape(loc)}</loc>`,
-    `    <lastmod>${isoDate(lastmod)}</lastmod>`,
-    `    <changefreq>${changefreq}</changefreq>`,
-    `    <priority>${priority.toFixed(1)}</priority>`,
-    "  </url>",
-  ].join("\n");
+  const lines = ["  <url>", `    <loc>${xmlEscape(loc)}</loc>`];
+  if (lastmod) lines.push(`    <lastmod>${isoDate(lastmod)}</lastmod>`);
+  lines.push("  </url>");
+  return lines.join("\n");
 }
 
 export function sitemapXml(urls: string): string {
@@ -56,13 +56,11 @@ export function sitemapIndexXml(entries: string): string {
   ].join("\n");
 }
 
-export function sitemapEntry(loc: string, lastmod: Date): string {
-  return [
-    "  <sitemap>",
-    `    <loc>${xmlEscape(loc)}</loc>`,
-    `    <lastmod>${isoDate(lastmod)}</lastmod>`,
-    "  </sitemap>",
-  ].join("\n");
+export function sitemapEntry(loc: string, lastmod?: Date | null): string {
+  const lines = ["  <sitemap>", `    <loc>${xmlEscape(loc)}</loc>`];
+  if (lastmod) lines.push(`    <lastmod>${isoDate(lastmod)}</lastmod>`);
+  lines.push("  </sitemap>");
+  return lines.join("\n");
 }
 
 export function sitemapHeaders(cacheMaxAge = 3600) {

@@ -26,6 +26,11 @@ export const metadata: Metadata = {
     "vu study resources",
     "admission virtual university",
   ],
+  // The blog listing is currently empty (no articles yet). Keep it out of
+  // Google's index to avoid a thin-content / "no articles" page being
+  // indexed. REMOVE this robots block once articles are published so the
+  // listing can rank again.
+  robots: { index: false, follow: true },
   alternates: { canonical: `${BASE_URL}/blog` },
   openGraph: {
     title: "VirtualU Blog — BSCS Subjects, VU Admission & Study Guides",

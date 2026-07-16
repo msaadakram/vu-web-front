@@ -9,7 +9,7 @@ import {
 import {
   BookOpen, FileText, Users, Award, ArrowRight,
   Clock, GraduationCap, Download, Sparkles, Newspaper, Library,
-  Star, Zap, Shield, TrendingUp, CheckCircle2, ChevronRight,
+  Star, Zap, Shield, TrendingUp, ChevronRight,
 } from "lucide-react";
 import { fetchStats, type LatestPost } from "@/lib/stats";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -382,9 +382,9 @@ export default function HomePage() {
 
               {/* H1 — mobile-first font scale */}
               <motion.h1
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1, ease }}
+                transition={{ duration: 0.4, ease }}
                 className="text-white"
                 style={{
                   fontFamily: "var(--font-playfair), serif",
@@ -417,26 +417,33 @@ export default function HomePage() {
                 transition={{ duration: 0.7, delay: 0.25 }}
                 className="mt-4 sm:mt-6 text-white/60 leading-relaxed max-w-sm sm:max-w-lg text-sm sm:text-base"
               >
-                Access thousands of study resources, expert blogs, and comprehensive materials. Your path to academic excellence starts here.
+                Free BSCS subjects list semester-wise, opencourseware, VU LMS &amp; admission guides, MBA, BBA, MS programs and fee structure — everything for Virtual University of Pakistan students.
               </motion.p>
 
-              {/* Feature pills — 2×2 grid on mobile, wrap on larger */}
+              {/* Intent router — surfaces the three highest-volume head terms
+                  (BSCS subjects, uni admission, VU LMS) directly above the fold
+                  instead of generic marketing copy. */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.35 }}
-                className="mt-4 sm:mt-5 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 w-full sm:w-auto"
+                className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full"
               >
-                {["Free Resources", "AI Study Guides", "Past Papers", "Handouts"].map((f, i) => (
-                  <motion.span
-                    key={f}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4 + i * 0.08 }}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white/6 border border-white/10 text-white/65 rounded-full text-xs font-medium"
-                  >
-                    <CheckCircle2 className="w-3 h-3 text-[#4eafc4] shrink-0" />{f}
-                  </motion.span>
+                {[
+                  { label: "BSCS Subjects List", href: "/programs/bs-computer-science", icon: BookOpen },
+                  { label: "Uni Admission Guide", href: "/about", icon: GraduationCap },
+                  { label: "VU LMS Login Help", href: "/resources", icon: Library },
+                ].map((c, i) => (
+                  <motion.div key={c.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.07 }}>
+                    <Link
+                      href={c.href}
+                      className="group flex items-center gap-2.5 w-full px-4 py-3 bg-white/8 hover:bg-white/14 border border-white/12 hover:border-[#4eafc4]/40 rounded-2xl text-left transition-all duration-200"
+                    >
+                      <c.icon className="w-4 h-4 text-[#4eafc4] shrink-0" />
+                      <span className="text-white/80 text-xs sm:text-sm font-medium leading-tight flex-1">{c.label}</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-white/30 group-hover:text-[#4eafc4] group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </Link>
+                  </motion.div>
                 ))}
               </motion.div>
 

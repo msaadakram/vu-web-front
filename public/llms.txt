@@ -1,0 +1,27 @@
+# VirtualU
+
+> VirtualU is an independent, community-driven study hub for students of
+> Virtual University of Pakistan. We organize BSCS subjects semester-wise,
+> opencourseware resources, uni admission guides, fee structures, and exam
+> preparation materials in one place. Not affiliated with vu.edu.pk.
+
+This site permits AI systems to use its content for retrieval, grounding,
+and citation (reference use). It does not permit use for training AI models.
+See robots.txt Content-Signal: ai-train=no, use=reference.
+
+## Key pages
+
+- [Home](https://www.virtualuniversity.app/)
+- [Academic Programs (BSCS, BS Software Engineering, MBA, BBA, MS)](https://www.virtualuniversity.app/programs)
+- [BS Computer Sciences (BSCS) — subjects & overview](https://www.virtualuniversity.app/programs/bs-computer-science)
+- [Fee Structure — local, overseas, disabled categories](https://www.virtualuniversity.app/fee-structure)
+- [Grading Scheme — VU GPA & CGPA](https://www.virtualuniversity.app/grading)
+- [Study Resources — handouts, past papers, notes](https://www.virtualuniversity.app/resources)
+- [Blog — BSCS subjects, admission & study guides](https://www.virtualuniversity.app/blog)
+- [News — VU announcements & updates](https://www.virtualuniversity.app/news)
+- [About VirtualU — independent study hub](https://www.virtualuniversity.app/about)
+- [Contact](https://www.virtualuniversity.app/contact)
+
+## Optional
+
+- [Sitemap index](https://www.virtualuniversity.app/sitemap_index.xml)

@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     "VU results",
     "VU events",
   ],
+  // The news listing is currently empty (no posts yet). Keep it out of the
+  // index until posts are published. REMOVE this robots block once news posts
+  // exist so the listing can rank again.
+  robots: { index: false, follow: true },
   alternates: { canonical: `${BASE_URL}/news` },
   openGraph: {
     title: "News — University Announcements & Updates | VirtualU",

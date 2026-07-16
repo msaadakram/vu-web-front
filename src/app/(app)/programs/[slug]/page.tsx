@@ -6,6 +6,22 @@ import { CheckCircle2, ArrowLeft, Briefcase, GraduationCap, Clock, Sparkles, Boo
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.BLOG_PUBLIC_BASE_URL || "http://localhost:3000";
 
+// Convert human-readable durations ("4 Years", "1.5 Years", "4 Months",
+// "One Semester") to ISO 8601 durations for schema.org courseWorkload.
+function isoDuration(duration: string): string {
+  const m = duration.match(/([\d.]+)\s*year/i);
+  if (m) {
+    const years = parseFloat(m[1]);
+    const whole = Math.floor(years);
+    const months = Math.round((years - whole) * 12);
+    return `P${whole}Y${months ? `${months}M` : ""}`;
+  }
+  const mo = duration.match(/([\d.]+)\s*month/i);
+  if (mo) return `P${parseInt(mo[1], 10)}M`;
+  if (/semester/i.test(duration)) return "P6M";
+  return "P4Y";
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
@@ -60,20 +76,24 @@ export default async function ProgramDetailPage({ params }: Props) {
           url: BASE_URL,
         },
         educationalCredentialAwarded: prog.degree,
-        timeRequired: prog.duration,
-        offers: {
-          "@type": "Offer",
-          category: "Free",
-          availability: "https://schema.org/OnlineOnly",
-        },
         hasCourseInstance: {
           "@type": "CourseInstance",
-          courseMode: "Online",
-          courseWorkload: prog.duration,
+          courseMode: "https://schema.org/Online",
+          courseWorkload: isoDuration(prog.duration),
           instructor: {
             "@type": "Organization",
             name: "Virtual University of Pakistan",
+            url: BASE_URL,
           },
+        },
+        // Tuition is set by VU per semester — we don't publish a fixed price
+        // to avoid the misleading "Free" category. Availability is InStock
+        // (seats are open); OnlineOnly is a courseMode, not availability.
+        offers: {
+          "@type": "Offer",
+          category: "Tuition",
+          availability: "https://schema.org/InStock",
+          url: getProgramUrl(slug),
         },
         audience: {
           "@type": "EducationalAudience",

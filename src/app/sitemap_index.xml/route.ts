@@ -15,9 +15,9 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const now = new Date();
 
-  let blogLastmod = now;
-  let newsLastmod = now;
-  let resourceLastmod = now;
+  let blogLastmod: Date | null = null;
+  let newsLastmod: Date | null = null;
+  let resourceLastmod: Date | null = null;
 
   try {
     const [blogRes, newsRes, resourceRes] = await Promise.all([
@@ -48,11 +48,14 @@ export async function GET() {
     console.warn("[SitemapIndex] Could not fetch lastmod dates:", (err as Error).message);
   }
 
+  // The flat sitemap.xml is the child that holds hub routes; programs.xml,
+  // blog.xml, news.xml, resources.xml and whats-new.xml hold the deep URLs.
+  // robots.txt declares only this index as the entry point (no circular ref).
   const entries = [
-    sitemapEntry(`${BASE_URL}/sitemap.xml`,           now),
-    sitemapEntry(`${BASE_URL}/sitemap/blog.xml`,      blogLastmod),
-    sitemapEntry(`${BASE_URL}/sitemap/news.xml`,      newsLastmod),
-    sitemapEntry(`${BASE_URL}/sitemap/programs.xml`,  now),
+    sitemapEntry(`${BASE_URL}/sitemap.xml`, now),
+    sitemapEntry(`${BASE_URL}/sitemap/blog.xml`, blogLastmod),
+    sitemapEntry(`${BASE_URL}/sitemap/news.xml`, newsLastmod),
+    sitemapEntry(`${BASE_URL}/sitemap/programs.xml`, now),
     sitemapEntry(`${BASE_URL}/sitemap/resources.xml`, resourceLastmod),
     sitemapEntry(`${BASE_URL}/sitemap/whats-new.xml`, now),
   ].join("\n");

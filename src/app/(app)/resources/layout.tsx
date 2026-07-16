@@ -29,6 +29,10 @@ export const metadata: Metadata = {
     "bs accounting and finance subjects",
     "virtual university study resources",
   ],
+  // The resources listing is currently empty (0 files). Keep it out of the
+  // index until resources are uploaded. REMOVE this robots block once resources
+  // exist so the listing can rank again.
+  robots: { index: false, follow: true },
   alternates: { canonical: `${BASE_URL}/resources` },
   openGraph: {
     title: "VU Resources — Handouts, Past Papers & Free Study Material",

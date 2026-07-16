@@ -41,6 +41,12 @@ function ValueCard({ value, i }: { value: (typeof values)[0]; i: number }) {
   );
 }
 
+export const metadata = {
+  title: "About VirtualU — Independent VU Study Hub",
+  description: "VirtualU is an independent, community-driven study hub for Virtual University of Pakistan students. Not affiliated with vu.edu.pk. Browse BSCS subjects, opencourseware, and admission guides.",
+  alternates: { canonical: "/about" },
+};
+
 export default function AboutPage() {
   const missionRef = useRef(null);
   const missionInView = useInView(missionRef, { once: true, margin: "-80px" });
@@ -61,8 +67,13 @@ export default function AboutPage() {
               About VirtualU
             </h1>
             <p className="text-white/65 max-w-2xl mx-auto leading-relaxed text-sm sm:text-base px-2">
-              Founded in 2010, VirtualU has been empowering Pakistani students with world-class digital education resources, past papers, and academic blogs for over a decade.
+              VirtualU is an independent, community-driven study hub built by students for students of Virtual University of Pakistan. We organize BSCS subjects, opencourseware resources, admission guides, and exam materials in one place.
             </p>
+            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-amber-400/15 border border-amber-300/30 text-amber-100 rounded-full text-xs font-medium">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              Not affiliated with Virtual University of Pakistan. The official site is{" "}
+              <a href="https://www.vu.edu.pk" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">vu.edu.pk</a>.
+            </div>
           </motion.div>
         </div>
         <div className="absolute bottom-0 left-0 right-0">
@@ -95,9 +106,9 @@ export default function AboutPage() {
               </motion.p>
               <motion.div variants={fadeUp} custom={4} className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
                 {[
-                  { val: "14+", label: "Years of Service" },
                   { val: "100+", label: "Academic Programs" },
                   { val: "Free", label: "For Students" },
+                  { val: "AI", label: "Study Guides" },
                 ].map((s) => (
                   <div key={s.label} className="text-center p-3 sm:p-4 bg-[#f8fafc] rounded-xl">
                     <div className="text-[#4eafc4] font-bold text-lg sm:text-xl">{s.val}</div>
@@ -220,7 +231,7 @@ export default function AboutPage() {
             <p className="text-white/60 mb-10 sm:mb-12 text-sm sm:text-base px-2">Have questions? We&apos;re here to help you succeed.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-xl mx-auto">
               {[
-                { icon: Mail, label: "Email", val: "support@virtualu.edu.pk" },
+                { icon: Mail, label: "Email", val: "hello@virtualuniversity.app" },
                 { icon: MapPin, label: "Location", val: "Islamabad, Pakistan" },
               ].map(({ icon: Icon, label, val }) => (
                 <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-5 sm:p-6">
