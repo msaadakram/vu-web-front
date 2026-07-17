@@ -1,11 +1,19 @@
 import type { Metadata, Viewport } from "next";
+import dynamic from "next/dynamic";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ChatWidget } from "@/components/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
+
+// Lazy-load the chat widget: it (and its react-markdown + remark-gfm
+// dependency, ~46 KB) is below-the-fold UI that doesn't need to block
+// first paint on any page. ssr:false keeps it out of the server bundle
+// so it can't be pulled into the shared /layout chunk.
+const ChatWidget = dynamic(() => import("@/components/ChatWidget").then((m) => m.ChatWidget), {
+  ssr: false,
+});
 
 // Self-hosted via next/font: eliminates the render-blocking
 // fonts.googleapis.com CSS request and the chained fonts.gstatic.com

@@ -1,13 +1,20 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { MessageCircle, Send, X, Bot, User, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Markdown } from "@/components/Markdown";
 import type { ChatMessage } from "@/lib/chat";
 import { sendChatMessageStream } from "@/lib/chat";
+
+// react-markdown + remark-gfm (~46 KB) only needs to load when a bot message
+// is actually rendered. Lazy-importing it here keeps the markdown parser out
+// of the shared /layout chunk so it doesn't block first paint on every page.
+const Markdown = lazy(async () => {
+  const { Markdown: M } = await import("@/components/Markdown");
+  return { default: M };
+});
 
 const SUGGESTIONS = [
   "What programs does VU offer?",
@@ -223,7 +230,9 @@ export function ChatWidget() {
                             ) : streaming && i === messages.length - 1 ? (
                               <span className="whitespace-pre-wrap">{msg.content}</span>
                             ) : (
-                              <Markdown content={msg.content} />
+                              <Suspense fallback={<span className="whitespace-pre-wrap">{msg.content}</span>}>
+                                <Markdown content={msg.content} />
+                              </Suspense>
                             )}
                             {streaming &&
                               i === messages.length - 1 &&
