@@ -21,7 +21,7 @@ export default async function Image({ params }: Props) {
   const { slug } = await params;
   const blog = await fetchBlog(slug);
 
-  const title = blog?.metaTitle || blog?.title || "VirtualU";
+  const title = blog?.metaTitle || blog?.title || "Virtual University";
   const category = blog?.category || "Article";
   const excerpt = (blog?.excerpt || "Study guides for Virtual University of Pakistan students.");
   const shortExcerpt = excerpt.length > 120 ? excerpt.slice(0, 120) + "…" : excerpt;

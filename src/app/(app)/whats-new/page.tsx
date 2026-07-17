@@ -13,7 +13,7 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "What's New — Chrome Extension & VULMS App | VirtualU",
+  title: "What's New — Chrome Extension & VULMS App | Virtual University",
   description:
     "VirtualU's Chrome Extension and VULMS mobile app bring modern, animated access to past papers, handouts, and notes. Plus the latest blogs, news, and resources.",
   keywords: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: `${BASE_URL}/whats-new` },
   openGraph: {
-    title: "What's New — Chrome Extension & VULMS App | VirtualU",
+    title: "What's New — Chrome Extension & VULMS App | Virtual University",
     description:
       "A fresh way to experience VirtualU — the Chrome Extension and VULMS mobile app, plus the latest blogs, news, and resources.",
     url: `${BASE_URL}/whats-new`,
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "What's New — Chrome Extension & VULMS App | VirtualU",
+    title: "What's New — Chrome Extension & VULMS App | Virtual University",
     description:
       "VirtualU's Chrome Extension and VULMS app bring modern, animated access to past papers, handouts, and notes.",
   },

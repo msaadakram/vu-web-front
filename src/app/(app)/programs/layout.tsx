@@ -8,7 +8,7 @@ const BASE_URL =
 export const metadata: Metadata = {
   title: {
     default: "VU Programs — BS, MBA, BBA, MS & ADP | Virtual University of Pakistan",
-    template: "%s Program | VirtualU",
+    template: "%s Program | Virtual University",
   },
   description:
     "Explore all Virtual University of Pakistan programs: BS Computer Sciences (BSCS), BS Software Engineering, BS Accounting & Finance, MBA, BBA, MS Computer Science, MPA, and more. Fee structure, eligibility, admission requirements, and semester-wise subjects.",

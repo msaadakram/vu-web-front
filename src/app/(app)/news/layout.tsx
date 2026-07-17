@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
   alternates: { canonical: `${BASE_URL}/news` },
   openGraph: {
-    title: "News — University Announcements & Updates | VirtualU",
+    title: "News — University Announcements & Updates | Virtual University",
     description:
       "Latest news and announcements from Virtual University of Pakistan.",
     url: `${BASE_URL}/news`,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "VirtualU News — VU Announcements & Updates",
+    title: "Virtual University News — VU Announcements & Updates",
     description: "Latest news and announcements from Virtual University of Pakistan.",
   },
 };

@@ -63,7 +63,7 @@ async function fetchBlogsByCategory(category: string, excludeSlug: string): Prom
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await fetchPost(slug);
-  if (!blog) return { title: "Not Found | VirtualU" };
+  if (!blog) return { title: "Not Found | Virtual University" };
 
   // Enrich keywords with SEO hashtag registry matches
   const hashtagMatches = matchHashtags(blog.tags || [], blog.keywords || []);

@@ -10,7 +10,7 @@ type NewsPost = { title: string; category?: string };
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let title = "VirtualU News";
+  let title = "Virtual University News";
   let category = "News";
   try {
     const res = await api<{ data: { blog: NewsPost } }>(`/news/${encodeURIComponent(slug)}`);

@@ -59,7 +59,7 @@ async function fetchPost(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await fetchPost(slug);
-  if (!blog) return { title: "Not Found | VirtualU" };
+  if (!blog) return { title: "Not Found | Virtual University" };
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";

@@ -31,7 +31,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const prog = getProgramBySlug(slug);
-  if (!prog) return { title: "Program Not Found | VirtualU" };
+  if (!prog) return { title: "Program Not Found | Virtual University" };
 
   return {
     title: prog.metaTitle,

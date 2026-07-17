@@ -125,7 +125,7 @@ export default async function SitemapPage() {
     { title: "Grading", href: "/grading", meta: "GPA & CGPA tools" },
     { title: "Study Resources", href: "/resources", meta: "Past papers, handouts & notes" },
     { title: "Upload", href: "/upload", meta: "Share a resource" },
-    { title: "About", href: "/about", meta: "About VirtualU" },
+    { title: "About", href: "/about", meta: "About Virtual University" },
   ];
 
   const articleGroupEntries: SitemapGroup["entries"] = blogPosts.map((b) => ({

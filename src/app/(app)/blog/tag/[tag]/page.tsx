@@ -27,11 +27,11 @@ async function fetchPostsByTag(tagSlug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tag } = await params;
   const hashtagEntry = SEO_HASHTAGS.find((h) => h.slug === tag);
-  if (!hashtagEntry) return { title: "Tag | VirtualU" };
+  if (!hashtagEntry) return { title: "Tag | Virtual University" };
 
   const keyword = hashtagEntry.keyword;
   return {
-    title: `#${hashtagEntry.tag} — VU Articles & Study Guides | VirtualU`,
+    title: `#${hashtagEntry.tag} — VU Articles & Study Guides | Virtual University`,
     description: `Browse all VirtualU articles tagged with #${hashtagEntry.tag}. Find study guides, subjects lists, admission info, and AI-generated content for Virtual University of Pakistan students searching for "${keyword}".`,
     keywords: [
       keyword,
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
     alternates: { canonical: `${BASE_URL}/blog/tag/${tag}` },
     openGraph: {
-      title: `#${hashtagEntry.tag} — VU Articles | VirtualU`,
+      title: `#${hashtagEntry.tag} — VU Articles | Virtual University`,
       description: `All VirtualU articles about ${hashtagEntry.tag} for Virtual University of Pakistan students.`,
       type: "website",
       url: `${BASE_URL}/blog/tag/${tag}`,

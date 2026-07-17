@@ -7,8 +7,8 @@ const BASE_URL =
 
 export const metadata: Metadata = {
   title: {
-    default: "Blog — BSCS Subjects, VU Programs & Admission Guides | VirtualU",
-    template: "%s | VirtualU Blog",
+    default: "Blog — BSCS Subjects, VU Programs & Admission Guides | Virtual University",
+    template: "%s | Virtual University Blog",
   },
   description:
     "Read expert VU study guides covering BSCS subjects list semester-wise, BS Computer Sciences courses, VU MBA programs, VU online admission steps, and LMS tutorials. AI-generated, SEO-optimized content for Virtual University of Pakistan students.",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
   alternates: { canonical: `${BASE_URL}/blog` },
   openGraph: {
-    title: "VirtualU Blog — BSCS Subjects, VU Admission & Study Guides",
+    title: "Virtual University Blog — BSCS Subjects, VU Admission & Study Guides",
     description: "Expert guides on BSCS subjects list, BS Computer Sciences semester-wise courses, VU MBA, BBA admission, and LMS tutorials for Virtual University of Pakistan students.",
     type: "website",
     url: `${BASE_URL}/blog`,

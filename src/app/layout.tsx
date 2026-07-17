@@ -47,8 +47,8 @@ const LOGO_URL = `${BASE_URL}/icon-512.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "BSCS Subjects List, BS Computer Sciences & VU Admission | VirtualU",
-    template: "%s | VirtualU",
+    default: "BSCS Subjects List, BS Computer Sciences & VU Admission | Virtual University",
+    template: "%s | Virtual University",
   },
   description:
     "Free BSCS subjects list semester-wise, BS Computer Sciences courses, opencourseware, VU LMS & admission guides, MBA, BBA, MS programs and fee structure for Virtual University of Pakistan students.",
@@ -179,7 +179,7 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: BASE_URL },
   openGraph: {
-    title: "VirtualU — BSCS Subjects, Uni Admission, VU Programs & Opencourseware",
+    title: "Virtual University — BSCS Subjects, Uni Admission, VU Programs & Opencourseware",
     description:
       "Browse BSCS subjects list semester-wise, BS Computer Sciences, opencourseware resources, VU LMS, uni admission guides, MBA, BBA, MS programs — everything for Virtual University of Pakistan students.",
     type: "website",
@@ -193,7 +193,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "VirtualU — BSCS Subjects, Uni Admission & VU Programs",
+    title: "Virtual University — BSCS Subjects, Uni Admission & VU Programs",
     description: "Explore BSCS subjects list, BS Computer Sciences courses, opencourseware, VU admission guides, MBA, BBA & more for Virtual University of Pakistan.",
     images: ["/opengraph-image"],
   },

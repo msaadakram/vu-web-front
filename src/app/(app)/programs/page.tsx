@@ -6,7 +6,7 @@ import { BookOpen, GraduationCap, Clock, ArrowRight, Sparkles } from "lucide-rea
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.BLOG_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
-  title: "Programs Offered – Virtual University of Pakistan | VirtualU",
+  title: "Programs Offered — Virtual University of Pakistan",
   description:
     "Explore all undergraduate, graduate, diploma, and short course programs offered by Virtual University of Pakistan. Find your program — BS, MS, B.Ed, diplomas & more.",
   keywords: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "Pakistan online university programs",
   ],
   openGraph: {
-    title: "Programs Offered – Virtual University of Pakistan",
+    title: "Programs Offered — Virtual University of Pakistan",
     description:
       "Browse all degree programs, diplomas, and short courses at Virtual University of Pakistan. Undergraduate, graduate, and specialized certificate programs.",
     url: `${BASE_URL}/programs`,

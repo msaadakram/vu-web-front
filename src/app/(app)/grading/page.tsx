@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Pakistan university grading",
   ],
   openGraph: {
-    title: "Grading Scheme — VU GPA & CGPA Calculator | VirtualU",
+    title: "Grading Scheme — VU GPA & CGPA Calculator | Virtual University",
     description:
       "Complete guide to Virtual University of Pakistan's grading scheme with grade points, GPA calculation, and CGPA formula.",
   },

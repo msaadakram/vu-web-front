@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Mail, MapPin, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact VirtualU",
+  title: "Contact Virtual University",
   description:
     "Contact VirtualU — an independent study hub for Virtual University of Pakistan students. Email us with questions, feedback, or takedown requests. Not affiliated with vu.edu.pk.",
   alternates: { canonical: "/contact" },

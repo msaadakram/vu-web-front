@@ -7,8 +7,8 @@ const BASE_URL =
 
 export const metadata: Metadata = {
   title: {
-    default: "VU Study Resources — Handouts, Past Papers & Course Notes | VirtualU",
-    template: "%s | VirtualU Resources",
+    default: "VU Study Resources — Handouts, Past Papers & Course Notes | Virtual University",
+    template: "%s | Virtual University Resources",
   },
   description:
     "Download VU study resources including BSCS handouts, past papers, CS101 lectures, CS301 data structures notes, and study schemes for all Virtual University of Pakistan programs. Free opencourseware resources.",

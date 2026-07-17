@@ -779,7 +779,7 @@ function Changelog() {
       tag: "Launch",
       tagBg: "bg-emerald-50 text-emerald-700",
       date: "Jul 2026",
-      title: "VirtualU Chrome Extension v1.0",
+      title: "Virtual University Chrome Extension v1.0",
       body: "Instant in-browser access to every past paper and handout. Auto-fills course codes on the VU LMS portal.",
       icon: Chrome,
     },
