@@ -114,7 +114,7 @@ export function Navbar() {
                   className={`block font-bold leading-none transition-colors duration-300 ${
                     scrolled || mobileOpen ? "text-[#1c3557]" : "text-white"
                   }`}
-                  style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem" }}
+                  style={{ fontFamily: "var(--font-playfair), serif", fontSize: "1.1rem" }}
                 >
                   VirtualU
                 </span>
@@ -377,7 +377,7 @@ export function Navbar() {
                   <div className="relative w-8 h-8 overflow-hidden rounded-lg">
                     <Image src="/facon.png" alt="VirtualU" fill className="object-cover" />
                   </div>
-                  <span className="font-bold text-[#1c3557]" style={{ fontFamily: "'Playfair Display', serif" }}>VirtualU</span>
+                  <span className="font-bold text-[#1c3557]" style={{ fontFamily: "var(--font-playfair), serif" }}>VirtualU</span>
                 </div>
                 <button onClick={() => setMobileOpen(false)} className="p-2 rounded-xl hover:bg-[#f0f7fa] text-[#64788f]">
                   <X className="w-4 h-4" />

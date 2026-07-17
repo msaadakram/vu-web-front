@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -6,10 +7,34 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 
+// Self-hosted via next/font: eliminates the render-blocking
+// fonts.googleapis.com CSS request and the chained fonts.gstatic.com
+// download, and bakes the @font-face into the build so first paint
+// isn't delayed by a third-party origin.
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.BLOG_PUBLIC_BASE_URL ||
   "https://www.virtualupk.vercel.app";
+
+// Square (512×512) logo used for Google's Organization logo, favicon set,
+// and PWA manifest. Must be an absolute, publicly accessible URL per
+// Google's site name & favicon guidelines.
+const LOGO_URL = `${BASE_URL}/icon-512.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -153,7 +178,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: BASE_URL,
     siteName: "VirtualU",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "VirtualU — VU Study Resources" }],
+    images: [
+      { url: "/opengraph-image", width: 1200, height: 630, alt: "VirtualU — VU Study Resources" },
+      { url: "/icon-512.png", width: 512, height: 512, alt: "VirtualU logo" },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -162,7 +190,16 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
   manifest: "/manifest.webmanifest",
-  icons: { icon: [{ url: "/facon.png", type: "image/png" }], apple: [{ url: "/facon.png" }] },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: [{ url: "/favicon.ico" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    other: [{ rel: "mask-icon", url: "/icon-512.png", color: "#1c3557" }],
+  },
   verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
 };
 
@@ -183,6 +220,13 @@ const organizationLd = {
   name: "Virtual University of Pakistan",
   alternateName: ["VirtualU", "VU", "VU Pakistan", "VU Pak"],
   url: BASE,
+  logo: {
+    "@type": "ImageObject",
+    url: LOGO_URL,
+    width: 512,
+    height: 512,
+  },
+  image: LOGO_URL,
   description:
     "Virtual University of Pakistan — Pakistan's first online university offering BS, MS, MBA, MPA, BBA and PhD programs via distance learning. VirtualU provides opencourseware resources, BSCS subjects list, study schemes, VU LMS guides, uni admission info, and exam preparation materials.",
   address: { "@type": "PostalAddress", addressLocality: "Lahore", addressRegion: "Punjab", addressCountry: "PK" },
@@ -219,11 +263,9 @@ const websiteLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
         <meta name="google-adsense-account" content="ca-pub-5487423854561897" />
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationLd, websiteLd]) }} />
       </head>
       <body className="font-sans antialiased bg-[#f8fafc] min-h-screen flex flex-col overflow-x-hidden">

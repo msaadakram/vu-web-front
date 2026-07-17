@@ -112,7 +112,7 @@ export function Footer() {
               <h3
                 className="text-white mb-1.5"
                 style={{
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "var(--font-playfair), serif",
                   fontSize: "clamp(1.15rem, 3vw, 1.35rem)",
                   fontWeight: 600,
                 }}
@@ -159,7 +159,7 @@ export function Footer() {
                 <span
                   className="block text-white font-bold"
                   style={{
-                    fontFamily: "'Playfair Display', serif",
+                    fontFamily: "var(--font-playfair), serif",
                     fontSize: "1.15rem",
                   }}
                 >
