@@ -5,6 +5,7 @@ import {
   sitemapXml,
   sitemapHeaders,
 } from "@/lib/sitemap";
+import { serverFetch } from "@/lib/server-fetch";
 
 const BASE_URL = getBaseUrl();
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
@@ -17,7 +18,7 @@ export async function GET() {
   let urls = "";
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/blog?limit=500`, { next: { revalidate: 3600 } });
+    const res = await serverFetch(`${BACKEND_URL}/api/blog?limit=500`, { next: { revalidate: 3600 } });
     if (res.ok) {
       const data = await res.json();
       urls = (data?.data?.blogs ?? [])

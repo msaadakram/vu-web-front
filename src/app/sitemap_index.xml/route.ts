@@ -5,6 +5,7 @@ import {
   sitemapEntry,
   sitemapHeaders,
 } from "@/lib/sitemap";
+import { serverFetch } from "@/lib/server-fetch";
 
 const BASE_URL = getBaseUrl();
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
@@ -21,9 +22,9 @@ export async function GET() {
 
   try {
     const [blogRes, newsRes, resourceRes] = await Promise.all([
-      fetch(`${BACKEND_URL}/api/blog?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
-      fetch(`${BACKEND_URL}/api/news?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
-      fetch(`${BACKEND_URL}/api/resources?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/blog?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/news?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/resources?limit=1&sort=-updatedAt`, { next: { revalidate: 3600 } }),
     ]);
 
     if (blogRes.ok) {

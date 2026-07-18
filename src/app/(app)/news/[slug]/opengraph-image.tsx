@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { api } from "@/lib/api";
+import { serverFetch } from "@/lib/server-fetch";
 
 export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
@@ -13,10 +13,16 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   let title = "Virtual University News";
   let category = "News";
   try {
-    const res = await api<{ data: { blog: NewsPost } }>(`/news/${encodeURIComponent(slug)}`);
-    if (res?.data?.blog) {
-      title = res.data.blog.title;
-      category = res.data.blog.category || "News";
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
+    const res = await serverFetch(
+      `${backendUrl}/api/news/${encodeURIComponent(slug)}`
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.data?.blog) {
+        title = data.data.blog.title;
+        category = data.data.blog.category || "News";
+      }
     }
   } catch {
     // fall back to defaults

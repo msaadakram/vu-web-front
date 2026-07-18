@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Hash, ArrowLeft, Clock, BookOpen, TrendingUp } from "lucide-react";
 import { SEO_HASHTAGS, getTopHashtags } from "@/lib/seo-hashtags";
+import { serverFetch } from "@/lib/server-fetch";
 
 type Props = { params: Promise<{ tag: string }> };
 
@@ -14,7 +15,7 @@ async function fetchPostsByTag(tagSlug: string) {
     // Try searching by keyword and by tag
     const hashtagEntry = SEO_HASHTAGS.find((h) => h.slug === tagSlug);
     const keyword = hashtagEntry?.keyword || tagSlug.replace(/-/g, " ");
-    const res = await fetch(
+    const res = await serverFetch(
       `${backendUrl}/api/blog?tag=${encodeURIComponent(tagSlug)}&keyword=${encodeURIComponent(keyword)}&limit=12`,
       { next: { revalidate: 1800 } }
     );

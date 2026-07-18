@@ -2,6 +2,7 @@ import { type Metadata } from "next";
 
 import WhatsNewClient from "./WhatsNewClient";
 import type { Feed } from "./WhatsNewClient";
+import { serverFetch } from "@/lib/server-fetch";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -61,9 +62,9 @@ type ResourceItem = {
 async function fetchNew(): Promise<Feed> {
   try {
     const [blogRes, newsRes, resourceRes] = await Promise.all([
-      fetch(`${BACKEND_URL}/api/blog?limit=6&sort=-createdAt`, { next: { revalidate: 3600 } }),
-      fetch(`${BACKEND_URL}/api/news?limit=6&sort=-createdAt`, { next: { revalidate: 3600 } }),
-      fetch(`${BACKEND_URL}/api/resources?limit=6&sort=-createdAt`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/blog?limit=6&sort=-createdAt`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/news?limit=6&sort=-createdAt`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/resources?limit=6&sort=-createdAt`, { next: { revalidate: 3600 } }),
     ]);
 
     const [blogData, newsData, resourceData] = await Promise.all([

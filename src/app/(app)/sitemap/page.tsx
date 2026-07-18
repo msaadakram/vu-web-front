@@ -3,6 +3,7 @@ import { Map, ArrowLeft, FileText, Newspaper, GraduationCap, LayoutGrid, Chevron
 import { allPrograms } from "@/lib/programs";
 import { SitemapBrowser, type SitemapGroup } from "@/components/SitemapBrowser";
 import { SitemapXmlViewer } from "@/components/SitemapXmlViewer";
+import { serverFetch } from "@/lib/server-fetch";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.BLOG_PUBLIC_BASE_URL || "http://localhost:3000";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
@@ -35,9 +36,9 @@ export default async function SitemapPage() {
 
   try {
     const [blogRes, newsRes, resourceRes] = await Promise.all([
-      fetch(`${BACKEND_URL}/api/blog?limit=500`,      { next: { revalidate: 3600 } }),
-      fetch(`${BACKEND_URL}/api/news?limit=500`,      { next: { revalidate: 3600 } }),
-      fetch(`${BACKEND_URL}/api/resources?limit=500`, { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/blog?limit=500`,      { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/news?limit=500`,      { next: { revalidate: 3600 } }),
+      serverFetch(`${BACKEND_URL}/api/resources?limit=500`, { next: { revalidate: 3600 } }),
     ]);
 
     const [blogData, newsData, resourceData]: [BlogApiResponse, BlogApiResponse, ResourceApiResponse] =

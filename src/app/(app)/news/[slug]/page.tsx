@@ -14,6 +14,7 @@ import {
   Network,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { serverFetch } from "@/lib/server-fetch";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ShareButton } from "@/components/ShareButton";
@@ -44,7 +45,7 @@ type NewsPost = {
 async function fetchPost(slug: string) {
   try {
     const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
-    const res = await fetch(
+    const res = await serverFetch(
       `${backendUrl}/api/news/${encodeURIComponent(slug)}`,
       { cache: "no-store" }
     );

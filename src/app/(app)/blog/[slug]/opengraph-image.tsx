@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { serverFetch } from "@/lib/server-fetch";
 
 export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
@@ -10,7 +11,7 @@ type Props = { params: Promise<{ slug: string }> };
 async function fetchBlog(slug: string) {
   try {
     const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
-    const res = await fetch(`${backendUrl}/api/blog/${encodeURIComponent(slug)}`, { next: { revalidate: 3600 } });
+    const res = await serverFetch(`${backendUrl}/api/blog/${encodeURIComponent(slug)}`, { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     const data = await res.json();
     return data.data?.blog || null;

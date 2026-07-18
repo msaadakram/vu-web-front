@@ -7,6 +7,7 @@ import {
   ArrowUpRight, Hash,
 } from "lucide-react";
 import { getBlogBySlug } from "@/lib/blog";
+import { serverFetch } from "@/lib/server-fetch";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ShareButton } from "@/components/ShareButton";
@@ -29,7 +30,7 @@ export const dynamic = "force-dynamic";
 async function fetchPost(slug: string) {
   try {
     const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
-    const res = await fetch(`${backendUrl}/api/blog/${encodeURIComponent(slug)}`, { next: { revalidate: 3600 } });
+    const res = await serverFetch(`${backendUrl}/api/blog/${encodeURIComponent(slug)}`, { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     const data = await res.json();
     return data.data?.blog || null;
@@ -41,7 +42,7 @@ async function fetchRelatedPosts(slugs: string[]): Promise<RelatedBlogCard[]> {
     const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
     const results = await Promise.allSettled(
       slugs.map((s) =>
-        fetch(`${backendUrl}/api/blog/${encodeURIComponent(s)}`, { next: { revalidate: 3600 } })
+        serverFetch(`${backendUrl}/api/blog/${encodeURIComponent(s)}`, { next: { revalidate: 3600 } })
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => d?.data?.blog || null)
       )
@@ -55,7 +56,7 @@ async function fetchRelatedPosts(slugs: string[]): Promise<RelatedBlogCard[]> {
 async function fetchBlogsByCategory(category: string, excludeSlug: string): Promise<RelatedBlogCard[]> {
   try {
     const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
-    const res = await fetch(
+    const res = await serverFetch(
       `${backendUrl}/api/blog?category=${encodeURIComponent(category)}&limit=4`,
       { next: { revalidate: 3600 } }
     );
