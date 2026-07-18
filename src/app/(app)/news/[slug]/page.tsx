@@ -56,6 +56,14 @@ async function fetchPost(slug: string) {
   }
 }
 
+// Force this dynamic route to render at request time. Without this, Next.js
+// prerenders the [slug] segment at build — any slug that didn't exist at
+// build (i.e. every newly published article) is frozen as 404 until a
+// full redeploy, because revalidatePath can only purge an existing entry,
+// not materialize a new one. `cache: "no-store"` on the fetch does NOT
+// opt out of this prerender.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await fetchPost(slug);

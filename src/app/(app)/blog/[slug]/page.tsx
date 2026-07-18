@@ -20,6 +20,12 @@ type Props = { params: Promise<{ slug: string }> };
 
 const BASE_URL = process.env.BLOG_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://www.virtualupk.vercel.app";
 
+// Force request-time rendering: without this, newly published blog slugs
+// that didn't exist at build are frozen as 404 until a full redeploy. The
+// `next:{revalidate:3600}` on the fetches handles staleness of EXISTING
+// entries but cannot materialize a brand-new slug.
+export const dynamic = "force-dynamic";
+
 async function fetchPost(slug: string) {
   try {
     const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
