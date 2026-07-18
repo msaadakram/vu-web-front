@@ -1,7 +1,7 @@
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.BLOG_PUBLIC_BASE_URL ||
-  "https://www.virtualupk.vercel.app";
+  "https://www.virtualuniversity.app";
 
 export function getBaseUrl() {
   return BASE_URL;

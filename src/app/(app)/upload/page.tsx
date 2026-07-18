@@ -51,7 +51,11 @@ const ALLOWED_EXT = [
 ];
 const MAX_SIZE = 50 * 1024 * 1024;
 const POLL_INTERVAL = 2500;
-const MAX_POLL_MS = 180_000; // 3 minutes
+// Must outlive the backend AI call (DOAI_TIMEOUT = 300s). If the frontend
+// gives up first, it shows "Article generation is taking longer than
+// expected" while the article is still 'generating' and will publish
+// shortly after. 6 min gives a 1-min margin past the backend timeout.
+const MAX_POLL_MS = 360_000;
 
 function formatBytes(b: number) {
   if (!b) return "0 B";

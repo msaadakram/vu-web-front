@@ -57,7 +57,12 @@ export default function AdminCreateNews() {
   const pollForCompletion = useCallback(
     (postId: string, startTime: number) => {
       const POLL_INTERVAL = 2500;
-      const MAX_POLL_MS = 180_000;
+      // Must outlive the backend AI call (DOAI_TIMEOUT = 300s). If the
+      // frontend gives up first, the user is bounced while the article is
+      // still 'generating' and the /news/{slug} page 404s (getBySlug only
+      // returns status:'published'). 6 min gives a 1-min margin past the
+      // backend timeout so we always observe the terminal state.
+      const MAX_POLL_MS = 360_000;
 
       pollRef.current = setInterval(async () => {
         try {

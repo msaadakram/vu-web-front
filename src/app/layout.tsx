@@ -37,7 +37,7 @@ const playfair = Playfair_Display({
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.BLOG_PUBLIC_BASE_URL ||
-  "https://www.virtualupk.vercel.app";
+  "https://www.virtualuniversity.app";
 
 // Square (512×512) logo used for Google's Organization logo, favicon set,
 // and PWA manifest. Must be an absolute, publicly accessible URL per
@@ -47,7 +47,7 @@ const LOGO_URL = `${BASE_URL}/icon-512.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "BSCS Subjects List, BS Computer Sciences & VU Admission | Virtual University",
+    default: "VirtualU — Study Resources for Virtual University of Pakistan",
     template: "%s | Virtual University",
   },
   description:
@@ -179,7 +179,7 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: BASE_URL },
   openGraph: {
-    title: "Virtual University — BSCS Subjects, Uni Admission, VU Programs & Opencourseware",
+    title: "VirtualU — Study Resources for Virtual University of Pakistan",
     description:
       "Browse BSCS subjects list semester-wise, BS Computer Sciences, opencourseware resources, VU LMS, uni admission guides, MBA, BBA, MS programs — everything for Virtual University of Pakistan students.",
     type: "website",
@@ -193,7 +193,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Virtual University — BSCS Subjects, Uni Admission & VU Programs",
+    title: "VirtualU — Study Resources for Virtual University of Pakistan",
     description: "Explore BSCS subjects list, BS Computer Sciences courses, opencourseware, VU admission guides, MBA, BBA & more for Virtual University of Pakistan.",
     images: ["/opengraph-image"],
   },
